@@ -1,0 +1,88 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# ===== Packaging / build =====
+build/
+dist/
+downloads/
+.eggs/
+*.egg
+*.egg-info/
+wheels/
+*.whl
+
+# ===== Virtual environments =====
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ===== uv =====
+# NOTE: uv.lock is committed on purpose (reproducible installs) — do NOT ignore it.
+.uv/
+
+# ===== Environment / secrets =====
+.env
+.env.*
+!.env.example
+*.pem
+
+# ===== Testing / type-check / lint caches =====
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pytype/
+.coverage
+.coverage.*
+htmlcov/
+.cache/
+.tox/
+.nox/
+nosetests.xml
+coverage.xml
+
+# ===== Jupyter =====
+.ipynb_checkpoints/
+
+# ===== Logs =====
+*.log
+logs/
+
+# ===== IDE / editor =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===== OS junk =====
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===== Databases =====
+*.db
+*.sqlite
+*.sqlite3
+
+# ===== Project runtime data (keep the folder, ignore the contents) =====
+uploads/*
+!uploads/.gitkeep
+
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+storage/sqlite/*
+!storage/sqlite/.gitkeep
+
+storage/vectors/*
+!storage/vectors/.gitkeep

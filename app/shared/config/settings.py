@@ -1,0 +1,39 @@
+from functools import lru_cache
+from pathlib import Path
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+# .env lives at the project root: .../pdf-rag/.env
+_ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
+
+
+class Settings(BaseSettings):
+    # read values from .env. fields have NO defaults -> they are REQUIRED:
+    # if a var is missing in .env, the app fails fast at startup.
+    model_config = SettingsConfigDict(
+        env_file=str(_ENV_FILE),
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    # --- project metadata ---
+    name: str
+    description: str
+    version: str
+
+    # --- database ---
+    database_url: str
+
+    # --- storage paths ---
+    upload_dir: str
+
+
+@lru_cache
+def get_settings() -> Settings:
+    """Build Settings once and cache it (singleton)."""
+    return Settings()
+
+
+# import this everywhere: `from app.shared.config.settings import settings`
+settings = get_settings()
