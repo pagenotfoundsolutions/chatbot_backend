@@ -4,8 +4,11 @@ from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-# .env lives at the project root: .../pdf-rag/.env
-_ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
+import os
+
+# Default to env/.env.dev if APP_ENV is not set
+_APP_ENV = os.getenv("APP_ENV", "dev")
+_ENV_FILE = Path(__file__).resolve().parents[3] / "env" / f".env.{_APP_ENV}"
 
 
 class Settings(BaseSettings):

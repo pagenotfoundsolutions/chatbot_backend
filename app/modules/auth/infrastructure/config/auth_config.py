@@ -5,8 +5,11 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# .env lives at the project root: .../pdf-rag/.env
-_ENV_FILE = Path(__file__).resolve().parents[5] / ".env"
+import os
+
+# Default to env/.env.dev if APP_ENV is not set
+_APP_ENV = os.getenv("APP_ENV", "dev")
+_ENV_FILE = Path(__file__).resolve().parents[5] / "env" / f".env.{_APP_ENV}"
 
 
 class AuthConfig(BaseSettings):
@@ -19,7 +22,7 @@ class AuthConfig(BaseSettings):
         extra="ignore",
     )
 
-    jwt_secret_key: str = "a_very_secret_default_key_for_development_only"
+    jwt_secret_key: str
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 15
     refresh_token_expire_days: int = 7

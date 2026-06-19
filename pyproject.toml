@@ -13,6 +13,7 @@ dependencies = [
     "langgraph>=0.2.0",
     "numpy>=2.4.6",
     "passlib[bcrypt]>=1.7.4",
+    "psycopg[binary]>=3.3.4",
     "pydantic-settings>=2.14.1",
     "pydantic[email]>=2.13.4",
     "pyjwt>=2.13.0",
