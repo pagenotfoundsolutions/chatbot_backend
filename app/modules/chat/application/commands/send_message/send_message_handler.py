@@ -36,7 +36,7 @@ class SendMessageHandler(SendMessageUseCase):
 
     def execute(self, command: SendMessageCommand) -> SendMessageResult:
         content = self._clean(command.content)
-        conversation = self._require(command.conversation_id)
+        conversation = self._require(command.conversation_id, command.auth_user_id)
 
         user_message = conversation.post_user_message(content)
         reply = self._llm.generate(conversation.messages) or ""
@@ -53,7 +53,7 @@ class SendMessageHandler(SendMessageUseCase):
 
     def execute_stream(self, command: SendMessageCommand) -> Iterator[str]:
         content = self._clean(command.content)
-        conversation = self._require(command.conversation_id)
+        conversation = self._require(command.conversation_id, command.auth_user_id)
         conversation.post_user_message(content)
 
         chunks: list[str] = []
@@ -74,8 +74,8 @@ class SendMessageHandler(SendMessageUseCase):
             raise EmptyMessageContent()
         return cleaned
 
-    def _require(self, conversation_id: str) -> Conversation:
+    def _require(self, conversation_id: str, auth_user_id: str) -> Conversation:
         conversation = self._repository.get(conversation_id)
-        if conversation is None:
+        if conversation is None or conversation.auth_user_id != auth_user_id:
             raise ConversationNotFound(conversation_id)
         return conversation

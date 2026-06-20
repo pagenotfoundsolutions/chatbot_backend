@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, ForeignKey, String, Text
+from sqlalchemy import String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.schema import ForeignKey
 
 from app.shared.database.database import Base
+from app.shared.database.core_model import CoreModelMixin
 
 if TYPE_CHECKING:
     from app.modules.chat.adapters.output.persistence.models.conversation_model import (
@@ -14,19 +15,15 @@ if TYPE_CHECKING:
     )
 
 
-class MessageModel(Base):
-    """ORM row for a single message, owned by a conversation."""
+class MessageModel(CoreModelMixin, Base):
+    """ORM row for a single turn in a conversation."""
 
     __tablename__ = "messages"
 
-    id: Mapped[str] = mapped_column(String(36), primary_key=True)
     conversation_id: Mapped[str] = mapped_column(
-        ForeignKey("conversations.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
+        String(36), ForeignKey("conversations.id", ondelete="CASCADE"), index=True
     )
-    role: Mapped[str] = mapped_column(String(16), nullable=False)
+    role: Mapped[str] = mapped_column(String(50), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
     conversation: Mapped["ConversationModel"] = relationship(back_populates="messages")

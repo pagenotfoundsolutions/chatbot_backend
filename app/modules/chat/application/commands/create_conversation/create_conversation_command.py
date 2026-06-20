@@ -7,4 +7,5 @@ from dataclasses import dataclass
 class CreateConversationCommand:
     """Intent to open a new conversation."""
 
+    auth_user_id: str
     title: str | None = None

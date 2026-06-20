@@ -1,6 +1,7 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from sqlalchemy.exc import IntegrityError
 from app.shared.resp import ErrorResp
 from .exceptions import AppException
 
@@ -22,6 +23,16 @@ def validation_exception_handler(request: Request, exc: RequestValidationError):
     )
     return JSONResponse(
         status_code=422,
+        content=resp.model_dump()
+    )
+
+def integrity_exception_handler(request: Request, exc: IntegrityError):
+    resp = ErrorResp(
+        message="A database constraint was violated. Please check your input data for conflicts or missing references.", 
+        error="IntegrityError"
+    )
+    return JSONResponse(
+        status_code=400,
         content=resp.model_dump()
     )
 

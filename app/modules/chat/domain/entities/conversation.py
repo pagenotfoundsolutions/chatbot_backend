@@ -31,12 +31,14 @@ class Conversation(AggregateRoot[str]):
     def __init__(
         self,
         id: str,
+        auth_user_id: str,
         title: str,
         created_at: datetime,
         updated_at: datetime,
         messages: list[Message] | None = None,
     ) -> None:
         super().__init__(id)
+        self._auth_user_id = auth_user_id
         self._title = title
         self._created_at = created_at
         self._updated_at = updated_at
@@ -44,13 +46,17 @@ class Conversation(AggregateRoot[str]):
 
     # --- factory -----------------------------------------------------------
     @classmethod
-    def start(cls, title: str | None = None) -> "Conversation":
+    def start(cls, auth_user_id: str, title: str | None = None) -> "Conversation":
         """Open a brand-new, empty conversation."""
         now = _now()
         clean = (title or "").strip() or _DEFAULT_TITLE
-        return cls(id=_new_id(), title=clean, created_at=now, updated_at=now)
+        return cls(id=_new_id(), auth_user_id=auth_user_id, title=clean, created_at=now, updated_at=now)
 
     # --- read-only state ---------------------------------------------------
+    @property
+    def auth_user_id(self) -> str:
+        return self._auth_user_id
+
     @property
     def title(self) -> str:
         return self._title

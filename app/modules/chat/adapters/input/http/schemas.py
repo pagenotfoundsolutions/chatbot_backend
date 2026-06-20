@@ -12,6 +12,10 @@ class CreateConversationRequest(BaseModel):
     title: str | None = Field(default=None, max_length=255)
 
 
+class UpdateConversationRequest(BaseModel):
+    title: str = Field(min_length=1, max_length=255)
+
+
 class SendMessageRequest(BaseModel):
     content: str = Field(min_length=1)
 

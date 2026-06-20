@@ -4,8 +4,10 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class GetConversationQuery:
-    """Intent to read a single conversation with its full message history."""
+class ListMessagesQuery:
+    """Intent to fetch paginated messages for a specific conversation."""
 
     conversation_id: str
     auth_user_id: str
+    page: int = 1
+    size: int = 20

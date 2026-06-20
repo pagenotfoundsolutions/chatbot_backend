@@ -18,5 +18,5 @@ class ListConversationsHandler(ListConversationsUseCase):
     def __init__(self, repository: ConversationRepositoryPort) -> None:
         self._repository = repository
 
-    def execute(self, query: ListConversationsQuery) -> list[Conversation]:
-        return self._repository.list()
+    def execute(self, query: ListConversationsQuery) -> tuple[list[Conversation], int]:
+        return self._repository.list(query.auth_user_id, query.page, query.size)

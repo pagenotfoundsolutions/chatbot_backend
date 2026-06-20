@@ -12,17 +12,32 @@ from app.modules.chat.adapters.output.persistence.sqlalchemy_conversation_reposi
 from app.modules.chat.application.commands.create_conversation.create_conversation_handler import (
     CreateConversationHandler,
 )
+from app.modules.chat.application.commands.delete_conversation.delete_conversation_handler import (
+    DeleteConversationHandler,
+)
+from app.modules.chat.application.commands.update_conversation.update_conversation_handler import (
+    UpdateConversationHandler,
+)
 from app.modules.chat.application.commands.send_message.send_message_handler import (
     SendMessageHandler,
 )
 from app.modules.chat.application.ports.input.create_conversation_use_case import (
     CreateConversationUseCase,
 )
+from app.modules.chat.application.ports.input.delete_conversation_use_case import (
+    DeleteConversationUseCase,
+)
 from app.modules.chat.application.ports.input.get_conversation_use_case import (
     GetConversationUseCase,
 )
 from app.modules.chat.application.ports.input.list_conversations_use_case import (
     ListConversationsUseCase,
+)
+from app.modules.chat.application.ports.input.list_messages_use_case import (
+    ListMessagesUseCase,
+)
+from app.modules.chat.application.ports.input.update_conversation_use_case import (
+    UpdateConversationUseCase,
 )
 from app.modules.chat.application.ports.input.send_message_use_case import (
     SendMessageUseCase,
@@ -36,6 +51,9 @@ from app.modules.chat.application.queries.get_conversation.get_conversation_hand
 )
 from app.modules.chat.application.queries.list_conversations.list_conversations_handler import (
     ListConversationsHandler,
+)
+from app.modules.chat.application.queries.list_messages.list_messages_handler import (
+    ListMessagesHandler,
 )
 from app.modules.chat.infrastructure.config.chat_config import get_chat_config
 from app.shared.database.session import get_db
@@ -93,3 +111,21 @@ def get_list_conversations_use_case(
     repository: ConversationRepositoryPort = Depends(get_conversation_repository),
 ) -> ListConversationsUseCase:
     return ListConversationsHandler(repository)
+
+
+def get_delete_conversation_use_case(
+    repository: ConversationRepositoryPort = Depends(get_conversation_repository),
+) -> DeleteConversationUseCase:
+    return DeleteConversationHandler(repository)
+
+
+def get_list_messages_use_case(
+    repository: ConversationRepositoryPort = Depends(get_conversation_repository),
+) -> ListMessagesUseCase:
+    return ListMessagesHandler(repository)
+
+
+def get_update_conversation_use_case(
+    repository: ConversationRepositoryPort = Depends(get_conversation_repository),
+) -> UpdateConversationUseCase:
+    return UpdateConversationHandler(repository)

@@ -31,6 +31,7 @@ class ConversationMapper:
     def to_domain(model: ConversationModel) -> Conversation:
         return Conversation(
             id=model.id,
+            auth_user_id=model.auth_user_id,
             title=model.title,
             created_at=model.created_at,
             updated_at=model.updated_at,

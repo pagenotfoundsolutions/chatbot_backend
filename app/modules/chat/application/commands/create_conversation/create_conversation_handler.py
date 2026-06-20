@@ -19,6 +19,6 @@ class CreateConversationHandler(CreateConversationUseCase):
         self._repository = repository
 
     def execute(self, command: CreateConversationCommand) -> Conversation:
-        conversation = Conversation.start(title=command.title)
+        conversation = Conversation.start(auth_user_id=command.auth_user_id, title=command.title)
         self._repository.save(conversation)
         return conversation

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
+from sqlalchemy.exc import IntegrityError
 
 from app.bootstrap.dependency_container import get_container
 from app.bootstrap.route_registry import build_api_router
@@ -9,7 +10,8 @@ from app.shared.database.init_db import init_db
 from app.shared.exceptions.exception_handlers import (
     app_exception_handler, 
     validation_exception_handler, 
-    general_exception_handler
+    general_exception_handler,
+    integrity_exception_handler
 )
 from app.shared.exceptions.exceptions import AppException
 
@@ -39,6 +41,9 @@ def create_app() -> FastAPI:
     # Override FastAPI's default Pydantic validation error handler
     app.add_exception_handler(RequestValidationError, validation_exception_handler)
     
+    # Catch SQLAlchemy IntegrityErrors (like foreign key violations)
+    app.add_exception_handler(IntegrityError, integrity_exception_handler)
+
     # Catch any unhandled 500 internal server errors so they return JSON, not plain text
     app.add_exception_handler(Exception, general_exception_handler)
 

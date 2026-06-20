@@ -8,7 +8,7 @@ class UpdateProfileHandler:
         self.profile_repo = profile_repo
 
     def execute(self, command: UpdateProfileCommand) -> Profile:
-        profile = self.profile_repo.get(command.profile_id)
+        profile = self.profile_repo.get_by_auth_user_id(command.auth_user_id)
         if not profile:
             raise ProfileNotFoundException()
 

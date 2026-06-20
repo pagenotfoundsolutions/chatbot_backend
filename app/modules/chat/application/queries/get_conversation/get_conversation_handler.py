@@ -21,6 +21,6 @@ class GetConversationHandler(GetConversationUseCase):
 
     def execute(self, query: GetConversationQuery) -> Conversation:
         conversation = self._repository.get(query.conversation_id)
-        if conversation is None:
+        if conversation is None or conversation.auth_user_id != query.auth_user_id:
             raise ConversationNotFound(query.conversation_id)
         return conversation

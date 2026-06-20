@@ -19,16 +19,18 @@ from app.modules.profile.adapters.input.http.dependencies import (
     get_update_profile_handler,
     get_get_profile_handler
 )
+from app.shared.security.dependencies import get_current_user_id
 
 router = APIRouter(prefix="/profiles", tags=["Profiles"])
 
 @router.post("", response_model=SuccessResp[ProfileResponse], status_code=status.HTTP_201_CREATED)
 def create_profile(
     request: CreateProfileRequest,
-    handler: Annotated[CreateProfileHandler, Depends(get_create_profile_handler)]
+    handler: Annotated[CreateProfileHandler, Depends(get_create_profile_handler)],
+    auth_user_id: UUID = Depends(get_current_user_id)
 ):
     command = CreateProfileCommand(
-        auth_user_id=request.auth_user_id,
+        auth_user_id=auth_user_id,
         name=request.name,
         profile_image_url=request.profile_image_url,
         dob=request.dob
@@ -36,21 +38,20 @@ def create_profile(
     profile = handler.execute(command)
     resp_data = ProfileResponse(
         id=profile.id,
-        auth_user_id=profile.auth_user_id,
         name=profile.name,
         profile_image_url=profile.profile_image_url,
         dob=profile.dob
     )
     return SuccessResp(message="Profile created successfully", data=resp_data)
 
-@router.put("/{profile_id}", response_model=SuccessResp[ProfileResponse])
+@router.put("", response_model=SuccessResp[ProfileResponse])
 def update_profile(
-    profile_id: UUID,
     request: UpdateProfileRequest,
-    handler: Annotated[UpdateProfileHandler, Depends(get_update_profile_handler)]
+    handler: Annotated[UpdateProfileHandler, Depends(get_update_profile_handler)],
+    auth_user_id: UUID = Depends(get_current_user_id)
 ):
     command = UpdateProfileCommand(
-        profile_id=profile_id,
+        auth_user_id=auth_user_id,
         name=request.name,
         profile_image_url=request.profile_image_url,
         dob=request.dob
@@ -58,23 +59,21 @@ def update_profile(
     profile = handler.execute(command)
     resp_data = ProfileResponse(
         id=profile.id,
-        auth_user_id=profile.auth_user_id,
         name=profile.name,
         profile_image_url=profile.profile_image_url,
         dob=profile.dob
     )
     return SuccessResp(message="Profile updated successfully", data=resp_data)
 
-@router.get("/user/{auth_user_id}", response_model=SuccessResp[ProfileResponse])
-def get_profile_by_user_id(
-    auth_user_id: UUID,
-    handler: Annotated[GetProfileHandler, Depends(get_get_profile_handler)]
+@router.get("", response_model=SuccessResp[ProfileResponse])
+def get_my_profile(
+    handler: Annotated[GetProfileHandler, Depends(get_get_profile_handler)],
+    auth_user_id: UUID = Depends(get_current_user_id)
 ):
     query = GetProfileQuery(auth_user_id=auth_user_id)
     profile = handler.execute(query)
     resp_data = ProfileResponse(
         id=profile.id,
-        auth_user_id=profile.auth_user_id,
         name=profile.name,
         profile_image_url=profile.profile_image_url,
         dob=profile.dob

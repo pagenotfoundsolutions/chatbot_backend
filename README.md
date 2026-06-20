@@ -36,13 +36,26 @@ Once the containers are up and running, you can access the following services:
 
 ### Database Migrations
 
-If you need to run initial database migrations using Alembic after spinning up the containers for the first time, you can execute:
+This project uses Alembic for database schema migrations. Because the app runs inside Docker, you should run Alembic commands inside the `app` container.
+
+**1. Generate an Automatic Migration**
+If you modified your SQLAlchemy models (`models.py`) and want Alembic to automatically detect changes and generate a migration file:
 ```bash
-uv run alembic upgrade head
+docker compose --env-file env/.env.dev -f docker/docker-compose.dev.yml exec app alembic revision --autogenerate -m "describe_your_changes"
 ```
 
+**2. Generate a Manual / Empty Migration**
+If you need to write custom SQL (e.g., migrating data, complex constraints, or fixing `NOT NULL` on existing columns before adding them):
+```bash
+docker compose --env-file env/.env.dev -f docker/docker-compose.dev.yml exec app alembic revision -m "manual_changes"
+```
+*After generating, edit the new file in `alembic/versions/` to add your custom `op.execute(...)` or schema changes.*
 
-docker compose --env-file env/.env.dev -f docker/docker-compose.dev.yml exec app uv run alembic upgrade head
+**3. Apply Migrations (Upgrade)**
+To apply any new migrations to your database:
+```bash
+docker compose --env-file env/.env.dev -f docker/docker-compose.dev.yml exec app alembic upgrade head
+```
 
 
 

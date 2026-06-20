@@ -5,7 +5,7 @@ from uuid import UUID
 
 @dataclass(frozen=True)
 class UpdateProfileCommand:
-    profile_id: UUID
+    auth_user_id: UUID
     name: str
     profile_image_url: Optional[str] = None
     dob: Optional[date] = None
