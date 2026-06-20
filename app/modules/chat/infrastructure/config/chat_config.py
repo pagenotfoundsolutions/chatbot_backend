@@ -5,7 +5,7 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# .env lives at the project root: .../pdf-rag/.env
+# .env lives at the project root: .../chatbot/.env
 _ENV_FILE = Path(__file__).resolve().parents[5] / ".env"
 
 # Sensible per-provider default model when LLM_MODEL is not set.
