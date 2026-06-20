@@ -8,12 +8,7 @@ from app.modules.chat.domain.value_objects.message_role import MessageRole
 from app.shared.kernel.entity import Entity
 
 
-def _new_id() -> str:
-    return str(uuid.uuid4())
-
-
-def _now() -> datetime:
-    return datetime.now(timezone.utc)
+from app.shared.kernel.utils import generate_uuid, utc_now
 
 
 class Message(Entity[str]):
@@ -39,7 +34,7 @@ class Message(Entity[str]):
 
     @classmethod
     def create(cls, role: MessageRole, content: str) -> "Message":
-        return cls(id=_new_id(), role=role, content=content, created_at=_now())
+        return cls(id=generate_uuid(), role=role, content=content, created_at=utc_now())
 
     @property
     def role(self) -> MessageRole:

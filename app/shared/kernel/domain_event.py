@@ -5,12 +5,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
 
-def _new_id() -> str:
-    return str(uuid.uuid4())
-
-
-def _now() -> datetime:
-    return datetime.now(timezone.utc)
+from app.shared.kernel.utils import generate_uuid, utc_now
 
 
 @dataclass(frozen=True)
@@ -24,5 +19,5 @@ class DomainEvent:
     `EventPublisherPort`.
     """
 
-    event_id: str = field(default_factory=_new_id, init=False)
-    occurred_at: datetime = field(default_factory=_now, init=False)
+    event_id: str = field(default_factory=generate_uuid, init=False)
+    occurred_at: datetime = field(default_factory=utc_now, init=False)

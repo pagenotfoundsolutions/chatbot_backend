@@ -11,12 +11,7 @@ from app.shared.kernel.aggregate_root import AggregateRoot
 _DEFAULT_TITLE = "New chat"
 
 
-def _new_id() -> str:
-    return str(uuid.uuid4())
-
-
-def _now() -> datetime:
-    return datetime.now(timezone.utc)
+from app.shared.kernel.utils import generate_uuid, utc_now
 
 
 class Conversation(AggregateRoot[str]):
@@ -48,9 +43,9 @@ class Conversation(AggregateRoot[str]):
     @classmethod
     def start(cls, auth_user_id: str, title: str | None = None) -> "Conversation":
         """Open a brand-new, empty conversation."""
-        now = _now()
+        now = utc_now()
         clean = (title or "").strip() or _DEFAULT_TITLE
-        return cls(id=_new_id(), auth_user_id=auth_user_id, title=clean, created_at=now, updated_at=now)
+        return cls(id=generate_uuid(), auth_user_id=auth_user_id, title=clean, created_at=now, updated_at=now)
 
     # --- read-only state ---------------------------------------------------
     @property
@@ -93,17 +88,17 @@ class Conversation(AggregateRoot[str]):
 
     # --- internals ---------------------------------------------------------
     def _append(self, role: MessageRole, content: str) -> Message:
-        message = Message.create(role=role, content=content)
-        self._messages.append(message)
+        new_msg = Message.create(role=role, content=content)
+        self._messages.append(new_msg)
         self._touch()
         self.record(
             MessagePosted(
                 conversation_id=self.id,
-                message_id=message.id,
+                message_id=new_msg.id,
                 role=role,
             )
         )
-        return message
+        return new_msg
 
     def _touch(self) -> None:
-        self._updated_at = _now()
+        self._updated_at = utc_now()
