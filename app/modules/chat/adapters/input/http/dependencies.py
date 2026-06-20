@@ -65,21 +65,15 @@ from app.shared.database.session import get_db
 
 @lru_cache
 def get_llm() -> LLMPort:
-    """Build the LLM adapter once (singleton) from config.
-
-    `echo` (default) needs no dependencies or keys. Any other provider is built
-    by the LangChain/LangGraph adapter — imported lazily so the heavy deps only
-    load when actually selected.
-    """
+    """Build the LLM adapter once (singleton) from config."""
     config = get_chat_config()
+    
     if config.provider.lower() == "echo":
+        from app.modules.chat.adapters.output.llm.echo_llm_adapter import EchoLLMAdapter
         return EchoLLMAdapter()
 
-    from app.modules.chat.adapters.output.llm.langchain_llm_adapter import (
-        LangChainLLMAdapter,
-    )
-
-    return LangChainLLMAdapter(config)
+    from app.modules.chat.adapters.output.llm.nvidia_llm_adapter import NvidiaLLMAdapter
+    return NvidiaLLMAdapter(config)
 
 
 def get_conversation_repository(

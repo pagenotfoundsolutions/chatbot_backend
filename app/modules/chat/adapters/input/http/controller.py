@@ -168,10 +168,17 @@ class ChatController:
         command = SendMessageCommand(
             conversation_id=conversation_id, auth_user_id=auth_user_id, content=request.content
         )
-        for chunk in use_case.execute_stream(command):
-            yield _sse("token", {"content": chunk})
+        
+        # Eagerly call execute_stream to catch any validation errors synchronously
+        # before the StreamingResponse starts.
+        stream_iterator = use_case.execute_stream(command)
+        
+        def _stream() -> Iterator[str]:
+            for chunk in stream_iterator:
+                yield _sse("token", {"content": chunk})
+            yield _sse("done", {"conversation_id": conversation_id})
             
-        yield _sse("done", {"conversation_id": conversation_id})
+        return _stream()
 
 
 def _sse(event: str, data: dict) -> str:

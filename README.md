@@ -59,4 +59,3 @@ docker compose --env-file env/.env.dev -f docker/docker-compose.dev.yml exec app
 
 
 
-git config user.name "Adesh Yadav" && git config user.email "adeshyadav1145@gmail.com" && git add -f env/.env.example && git add . && git commit -m "Dockerize app, migrate to PostgreSQL, and extract environment config"

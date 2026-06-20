@@ -3,6 +3,7 @@ from __future__ import annotations
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # .env lives at the project root: .../chatbot/.env
@@ -14,6 +15,7 @@ _DEFAULT_MODELS = {
     "openai": "gpt-4o-mini",
     "ollama": "llama3.1",
     "huggingface": "HuggingFaceH4/zephyr-7b-beta",
+    "nvidia": "nvidia/nemotron-3-ultra-550b-a55b",
     "echo": "echo",
 }
 
@@ -33,15 +35,23 @@ class ChatConfig(BaseSettings):
         extra="ignore",
     )
 
-    # anthropic | openai | ollama | huggingface | echo
+    # anthropic | openai | ollama | huggingface | nvidia | echo
     provider: str = "echo"
     model: str | None = None
     temperature: float = 0.7
     max_tokens: int = 1024
     system_prompt: str = "You are a helpful assistant."
 
-    # Ollama base url (only used when provider=ollama).
-    ollama_base_url: str = "http://localhost:11434"
+    # Optional provider-agnostic settings
+    base_url: str = "http://localhost:11434"
+    top_p: float = 0.95
+    reasoning_budget: int = 2048
+
+    # Specific API keys (loaded without LLM_ prefix)
+    anthropic_api_key: str | None = Field(default=None, validation_alias="ANTHROPIC_API_KEY")
+    openai_api_key: str | None = Field(default=None, validation_alias="OPENAI_API_KEY")
+    huggingface_api_key: str | None = Field(default=None, validation_alias="HUGGINGFACEHUB_API_TOKEN")
+    nvidia_api_key: str | None = Field(default=None, validation_alias="NVIDIA_API_KEY")
 
     def resolved_model(self) -> str:
         """The model id to use — explicit `LLM_MODEL` or the provider default."""

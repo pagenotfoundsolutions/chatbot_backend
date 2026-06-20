@@ -56,16 +56,19 @@ class SendMessageHandler(SendMessageUseCase):
         conversation = self._require(command.conversation_id, command.auth_user_id)
         conversation.post_user_message(content)
 
-        chunks: list[str] = []
-        for chunk in self._llm.stream(conversation.messages):
-            if not chunk:
-                continue
-            chunks.append(chunk)
-            yield chunk
+        def _stream() -> Iterator[str]:
+            chunks: list[str] = []
+            for chunk in self._llm.stream(conversation.messages):
+                if not chunk:
+                    continue
+                chunks.append(chunk)
+                yield chunk
 
-        reply = "".join(chunks).strip() or _EMPTY_REPLY_FALLBACK
-        conversation.post_assistant_message(reply)
-        self._repository.save(conversation)
+            reply = "".join(chunks).strip() or _EMPTY_REPLY_FALLBACK
+            conversation.post_assistant_message(reply)
+            self._repository.save(conversation)
+            
+        return _stream()
 
     # --- helpers -----------------------------------------------------------
     def _clean(self, content: str | None) -> str:

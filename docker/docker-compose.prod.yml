@@ -10,6 +10,8 @@ services:
     volumes:
       # Store uploads in a managed Docker volume
       - prod_app_uploads:/app/${UPLOAD_DIR:-storage/uploads}
+    env_file:
+      - ../env/.env.prod
     environment:
       - APP_ENV=prod
     depends_on:
@@ -28,15 +30,15 @@ services:
     volumes:
       - prod_postgres_data:/var/lib/postgresql/data
 
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@admin.com}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
-    ports:
-      - "${PGADMIN_PORT:-5050}:80"
-    depends_on:
-      - db
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@admin.com}
+  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+  #   ports:
+  #     - "${PGADMIN_PORT:-5050}:80"
+  #   depends_on:
+  #     - db
 
 volumes:
   prod_postgres_data:
