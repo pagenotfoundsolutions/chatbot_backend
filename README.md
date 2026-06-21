@@ -57,5 +57,11 @@ To apply any new migrations to your database:
 docker compose --env-file env/.env.dev -f docker/docker-compose.dev.yml exec app alembic upgrade head
 ```
 
+### Database Seeding
 
+To pre-populate the database with initial data (like supported AI Providers and Models), a local Python script leverages the application's domain use cases directly. Since the application runs within Docker, execute the command via `docker compose`:
 
+```bash
+docker compose --env-file env/.env.dev -f docker/docker-compose.dev.yml exec app python seeding/seed.py
+```
+This script reads from `seeding/seed_ai_data.json` and cleanly populates the PostgreSQL database.

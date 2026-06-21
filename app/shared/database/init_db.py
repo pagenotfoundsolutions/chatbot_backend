@@ -8,6 +8,7 @@ from app.shared.database.database import Base, engine
 import app.modules.chat.adapters.output.persistence.models  # noqa: F401
 import app.modules.auth.adapters.output.persistence.models  # noqa: F401
 import app.modules.profile.adapters.output.persistence.models  # noqa: F401
+import app.modules.ai_providers.adapters.output.persistence.models  # noqa: F401
 
 
 def init_db() -> None:

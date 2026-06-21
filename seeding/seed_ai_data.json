@@ -1,0 +1,214 @@
+{
+  "items": [
+    {
+      "provider": {
+        "name": "openai",
+        "display_name": "OpenAI",
+        "description": "Provider of GPT models.",
+        "api_base_url": "https://api.openai.com/v1",
+        "api_key": "YOUR_OPENAI_API_KEY_HERE"
+      },
+      "models": [
+        {
+          "model_key": "gpt-4o",
+          "display_name": "GPT-4o",
+          "description": "OpenAI's fastest and most capable model.",
+          "model_type": "text",
+          "max_input_tokens": 128000,
+          "max_output_tokens": 4096,
+          "max_context_window": 128000,
+          "supports_vision": true,
+          "supports_tools": true,
+          "supports_json": true
+        },
+        {
+          "model_key": "gpt-3.5-turbo",
+          "display_name": "GPT-3.5 Turbo",
+          "description": "Fast and cost-effective model.",
+          "model_type": "text",
+          "max_input_tokens": 16385,
+          "max_output_tokens": 4096,
+          "max_context_window": 16385,
+          "supports_vision": false,
+          "supports_tools": true,
+          "supports_json": true
+        },
+        {
+          "model_key": "gpt-4o-mini",
+          "display_name": "GPT-4o Mini",
+          "description": "Fast and cost-effective model.",
+          "model_type": "text",
+          "max_input_tokens": 128000,
+          "max_output_tokens": 16384,
+          "max_context_window": 128000,
+          "supports_vision": true,
+          "supports_tools": true,
+          "supports_json": true
+        }
+      ]
+    },
+    {
+      "provider": {
+        "name": "anthropic",
+        "display_name": "Anthropic",
+        "description": "Provider of Claude models.",
+        "api_base_url": "https://api.anthropic.com/v1",
+        "api_key": "YOUR_ANTHROPIC_API_KEY_HERE"
+      },
+      "models": [
+        {
+          "model_key": "claude-3-5-sonnet",
+          "display_name": "Claude 3.5 Sonnet",
+          "description": "Anthropic's most intelligent model.",
+          "model_type": "text",
+          "max_input_tokens": 200000,
+          "max_output_tokens": 8192,
+          "max_context_window": 200000,
+          "supports_vision": true,
+          "supports_tools": true,
+          "supports_json": true
+        },
+        {
+          "model_key": "claude-3-haiku",
+          "display_name": "Claude 3 Haiku",
+          "description": "Anthropic's fastest and most compact model.",
+          "model_type": "text",
+          "max_input_tokens": 200000,
+          "max_output_tokens": 4096,
+          "max_context_window": 200000,
+          "supports_vision": true,
+          "supports_tools": true,
+          "supports_json": true
+        },
+        {
+          "model_key": "claude-sonnet-4-6",
+          "display_name": "Claude Sonnet 4.6",
+          "description": "Anthropic's configured sonnet model.",
+          "model_type": "text",
+          "max_input_tokens": 200000,
+          "max_output_tokens": 8192,
+          "max_context_window": 200000,
+          "supports_vision": true,
+          "supports_tools": true,
+          "supports_json": true
+        }
+      ]
+    },
+    {
+      "provider": {
+        "name": "google",
+        "display_name": "Google",
+        "description": "Provider of Gemini models.",
+        "api_base_url": "https://generativelanguage.googleapis.com/v1beta",
+        "api_key": "YOUR_GOOGLE_API_KEY_HERE"
+      },
+      "models": [
+        {
+          "model_key": "gemini-1.5-pro",
+          "display_name": "Gemini 1.5 Pro",
+          "description": "Google's most capable model with a massive context window.",
+          "model_type": "text",
+          "max_input_tokens": 2000000,
+          "max_output_tokens": 8192,
+          "max_context_window": 2000000,
+          "supports_vision": true,
+          "supports_tools": true,
+          "supports_json": true
+        },
+        {
+          "model_key": "gemini-1.5-flash",
+          "display_name": "Gemini 1.5 Flash",
+          "description": "Google's lightweight, fast model.",
+          "model_type": "text",
+          "max_input_tokens": 1000000,
+          "max_output_tokens": 8192,
+          "max_context_window": 1000000,
+          "supports_vision": true,
+          "supports_tools": true,
+          "supports_json": true
+        }
+      ]
+    },
+    {
+      "provider": {
+        "name": "ollama",
+        "display_name": "Ollama",
+        "description": "Local LLM runner.",
+        "api_base_url": "http://localhost:11434",
+        "api_key": "ollama"
+      },
+      "models": [
+        {
+          "model_key": "llama3.1",
+          "display_name": "Llama 3.1",
+          "description": "Local Llama 3.1 Model",
+          "model_type": "text",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "max_context_window": 8192,
+          "supports_vision": false,
+          "supports_tools": true,
+          "supports_json": true
+        }
+      ]
+    },
+    {
+      "provider": {
+        "name": "huggingface",
+        "display_name": "Hugging Face",
+        "description": "Hugging Face Inference API.",
+        "api_base_url": "https://api-inference.huggingface.co/models",
+        "api_key": "YOUR_HF_API_KEY_HERE"
+      },
+      "models": [
+        {
+          "model_key": "HuggingFaceH4/zephyr-7b-beta",
+          "display_name": "Zephyr 7B Beta",
+          "description": "Zephyr 7B Beta model by HuggingFaceH4",
+          "model_type": "text",
+          "max_input_tokens": 8192,
+          "max_output_tokens": 4096,
+          "max_context_window": 8192,
+          "supports_vision": false,
+          "supports_tools": false,
+          "supports_json": false
+        }
+      ]
+    },
+    {
+      "provider": {
+        "name": "nvidia",
+        "display_name": "NVIDIA",
+        "description": "NVIDIA AI Foundation Endpoints.",
+        "api_base_url": "https://integrate.api.nvidia.com/v1",
+        "api_key": "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"
+      },
+      "models": [
+        {
+          "model_key": "nvidia/nemotron-3-ultra-550b-a55b",
+          "display_name": "Nemotron 3 Ultra 550B",
+          "description": "Massive Nemotron model by NVIDIA.",
+          "model_type": "text",
+          "max_input_tokens": 4096,
+          "max_output_tokens": 4096,
+          "max_context_window": 4096,
+          "supports_vision": false,
+          "supports_tools": false,
+          "supports_json": false
+        },
+        {
+          "model_key": "meta/llama-3.1-70b-instruct",
+          "display_name": "Meta Llama 3.1 70B Instruct",
+          "description": "Llama 3.1 70B served via NVIDIA.",
+          "model_type": "text",
+          "max_input_tokens": 128000,
+          "max_output_tokens": 4096,
+          "max_context_window": 128000,
+          "supports_vision": false,
+          "supports_tools": true,
+          "supports_json": true
+        }
+      ]
+    }
+  ]
+}
