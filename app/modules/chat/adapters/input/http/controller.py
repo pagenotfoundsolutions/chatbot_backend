@@ -1,4 +1,5 @@
 from __future__ import annotations
+import uuid
 
 import json
 from collections.abc import Iterator
@@ -67,7 +68,7 @@ class ChatController:
 
     @staticmethod
     def create_conversation(
-        auth_user_id: str,
+        auth_user_id: uuid.UUID,
         request: CreateConversationRequest,
         use_case: CreateConversationUseCase,
     ) -> ConversationResponse:
@@ -78,7 +79,7 @@ class ChatController:
 
     @staticmethod
     def list_conversations(
-        auth_user_id: str,
+        auth_user_id: uuid.UUID,
         page: int,
         size: int,
         use_case: ListConversationsUseCase,
@@ -95,8 +96,8 @@ class ChatController:
 
     @staticmethod
     def get_conversation(
-        auth_user_id: str,
-        conversation_id: str,
+        auth_user_id: uuid.UUID,
+        conversation_id: uuid.UUID,
         use_case: GetConversationUseCase,
     ) -> ConversationResponse:
         conversation = use_case.execute(
@@ -106,8 +107,8 @@ class ChatController:
 
     @staticmethod
     def update_conversation(
-        auth_user_id: str,
-        conversation_id: str,
+        auth_user_id: uuid.UUID,
+        conversation_id: uuid.UUID,
         request: UpdateConversationRequest,
         use_case: UpdateConversationUseCase,
     ) -> None:
@@ -117,8 +118,8 @@ class ChatController:
 
     @staticmethod
     def delete_conversation(
-        auth_user_id: str,
-        conversation_id: str,
+        auth_user_id: uuid.UUID,
+        conversation_id: uuid.UUID,
         use_case: DeleteConversationUseCase,
     ) -> None:
         use_case.execute(
@@ -127,8 +128,8 @@ class ChatController:
 
     @staticmethod
     def list_messages(
-        auth_user_id: str,
-        conversation_id: str,
+        auth_user_id: uuid.UUID,
+        conversation_id: uuid.UUID,
         page: int,
         size: int,
         use_case: ListMessagesUseCase,
@@ -145,8 +146,8 @@ class ChatController:
 
     @staticmethod
     def send_message(
-        auth_user_id: str,
-        conversation_id: str,
+        auth_user_id: uuid.UUID,
+        conversation_id: uuid.UUID,
         request: SendMessageRequest,
         use_case: SendMessageUseCase,
     ) -> SendMessageResponse:
@@ -159,8 +160,8 @@ class ChatController:
 
     @staticmethod
     def stream_message(
-        auth_user_id: str,
-        conversation_id: str,
+        auth_user_id: uuid.UUID,
+        conversation_id: uuid.UUID,
         request: SendMessageRequest,
         use_case: SendMessageUseCase,
     ) -> Iterator[str]:

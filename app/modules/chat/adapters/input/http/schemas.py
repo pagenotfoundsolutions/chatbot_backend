@@ -1,4 +1,5 @@
 from __future__ import annotations
+import uuid
 
 from datetime import datetime
 
@@ -22,7 +23,7 @@ class SendMessageRequest(BaseModel):
 
 # --- responses --------------------------------------------------------------
 class MessageResponse(BaseModel):
-    id: str
+    id: uuid.UUID
     role: MessageRole
     content: str
     created_at: datetime
@@ -31,7 +32,7 @@ class MessageResponse(BaseModel):
 class ConversationSummaryResponse(BaseModel):
     """Conversation without its messages — for list views."""
 
-    id: str
+    id: uuid.UUID
     title: str
     created_at: datetime
     updated_at: datetime
@@ -44,6 +45,6 @@ class ConversationResponse(ConversationSummaryResponse):
 
 
 class SendMessageResponse(BaseModel):
-    conversation_id: str
+    conversation_id: uuid.UUID
     user_message: MessageResponse
     assistant_message: MessageResponse

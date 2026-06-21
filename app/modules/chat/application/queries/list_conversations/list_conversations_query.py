@@ -1,4 +1,5 @@
 from __future__ import annotations
+import uuid
 
 from dataclasses import dataclass
 
@@ -7,6 +8,6 @@ from dataclasses import dataclass
 class ListConversationsQuery:
     """Intent to list conversation summaries, most-recently-active first."""
 
-    auth_user_id: str
+    auth_user_id: uuid.UUID
     page: int = 1
     size: int = 20

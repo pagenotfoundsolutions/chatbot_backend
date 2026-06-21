@@ -11,8 +11,9 @@ class SqlAlchemyRefreshTokenRepository(RefreshTokenRepositoryPort):
 
     def _to_domain(self, model: RefreshTokenModel) -> RefreshToken:
         return RefreshToken(
-            id=model.id,
-            user_id=UUID(model.user_id),
+            id=UUID(model.id) if isinstance(model.id, str) else model.id,
+            token_string=model.token_string,
+            user_id=UUID(model.user_id) if isinstance(model.user_id, str) else model.user_id,
             expires_at=model.expires_at,
             is_revoked=model.is_revoked,
             created_at=model.created_at,
@@ -22,7 +23,8 @@ class SqlAlchemyRefreshTokenRepository(RefreshTokenRepositoryPort):
     def save(self, refresh_token: RefreshToken) -> None:
         db_token = RefreshTokenModel(
             id=refresh_token.id,
-            user_id=str(refresh_token.user_id),
+            token_string=refresh_token.token_string,
+            user_id=refresh_token.user_id,
             expires_at=refresh_token.expires_at,
             is_revoked=refresh_token.is_revoked,
             created_at=refresh_token.created_at,
@@ -30,13 +32,19 @@ class SqlAlchemyRefreshTokenRepository(RefreshTokenRepositoryPort):
         )
         self.session.merge(db_token)
 
-    def get(self, id: str) -> Optional[RefreshToken]:
+    def get(self, id: UUID) -> Optional[RefreshToken]:
         db_token = self.session.query(RefreshTokenModel).filter(RefreshTokenModel.id == id).first()
         if db_token:
             return self._to_domain(db_token)
         return None
 
-    def delete(self, id: str) -> None:
+    def get_by_token(self, token_string: str) -> Optional[RefreshToken]:
+        db_token = self.session.query(RefreshTokenModel).filter(RefreshTokenModel.token_string == token_string).first()
+        if db_token:
+            return self._to_domain(db_token)
+        return None
+
+    def delete(self, id: UUID) -> None:
         db_token = self.session.query(RefreshTokenModel).filter(RefreshTokenModel.id == id).first()
         if db_token:
             self.session.delete(db_token)

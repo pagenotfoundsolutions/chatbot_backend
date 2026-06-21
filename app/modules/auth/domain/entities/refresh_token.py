@@ -3,10 +3,11 @@ from datetime import datetime
 from uuid import UUID, uuid4
 from app.shared.kernel.entity import Entity
 
-class RefreshToken(Entity[str]):
+class RefreshToken(Entity[UUID]):
     def __init__(
         self,
-        id: str,
+        id: UUID,
+        token_string: str,
         user_id: UUID,
         expires_at: datetime,
         is_revoked: bool = False,
@@ -14,6 +15,7 @@ class RefreshToken(Entity[str]):
         updated_at: datetime = None
     ) -> None:
         super().__init__(id)
+        self.token_string = token_string
         self.user_id = user_id
         self.expires_at = expires_at
         self.is_revoked = is_revoked
@@ -25,7 +27,8 @@ class RefreshToken(Entity[str]):
         """Factory method to create a new refresh token."""
         now = datetime.utcnow()
         return cls(
-            id=token_string,
+            id=uuid4(),
+            token_string=token_string,
             user_id=user_id,
             expires_at=expires_at,
             is_revoked=False,
@@ -35,8 +38,8 @@ class RefreshToken(Entity[str]):
     
     @property
     def token(self) -> str:
-        """The token string serves as the ID for this entity."""
-        return self.id
+        """The actual token string."""
+        return self.token_string
     
     def is_valid(self) -> bool:
         """Check if the token is not revoked and not expired."""

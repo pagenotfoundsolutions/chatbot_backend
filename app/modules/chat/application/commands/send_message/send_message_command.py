@@ -1,4 +1,5 @@
 from __future__ import annotations
+import uuid
 
 from dataclasses import dataclass
 
@@ -7,6 +8,6 @@ from dataclasses import dataclass
 class SendMessageCommand:
     """Intent to post a user message to a conversation and get the reply."""
 
-    conversation_id: str
-    auth_user_id: str
+    conversation_id: uuid.UUID
+    auth_user_id: uuid.UUID
     content: str

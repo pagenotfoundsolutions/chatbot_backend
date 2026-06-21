@@ -15,13 +15,13 @@ class SqlAlchemyAuthUserRepository(AuthUserRepositoryPort):
         self.session.merge(db_user) # merge handles insert and update
     
     def get(self, id: UUID) -> Optional[AuthUser]:
-        db_user = self.session.query(AuthUserModel).filter(AuthUserModel.id == str(id)).first()
+        db_user = self.session.query(AuthUserModel).filter(AuthUserModel.id == id).first()
         if db_user:
             return AuthUserMapper.to_domain(db_user)
         return None
         
     def delete(self, id: UUID) -> None:
-        db_user = self.session.query(AuthUserModel).filter(AuthUserModel.id == str(id)).first()
+        db_user = self.session.query(AuthUserModel).filter(AuthUserModel.id == id).first()
         if db_user:
             self.session.delete(db_user)
 

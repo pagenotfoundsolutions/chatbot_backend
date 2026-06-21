@@ -1,4 +1,5 @@
 from __future__ import annotations
+import uuid
 
 from collections.abc import Iterator
 
@@ -77,7 +78,7 @@ class SendMessageHandler(SendMessageUseCase):
             raise EmptyMessageContent()
         return cleaned
 
-    def _require(self, conversation_id: str, auth_user_id: str) -> Conversation:
+    def _require(self, conversation_id: uuid.UUID, auth_user_id: uuid.UUID) -> Conversation:
         conversation = self._repository.get(conversation_id)
         if conversation is None or conversation.auth_user_id != auth_user_id:
             raise ConversationNotFound(conversation_id)

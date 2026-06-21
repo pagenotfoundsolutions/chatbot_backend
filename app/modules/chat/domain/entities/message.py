@@ -11,7 +11,7 @@ from app.shared.kernel.entity import Entity
 from app.shared.kernel.utils import generate_uuid, utc_now
 
 
-class Message(Entity[str]):
+class Message(Entity[uuid.UUID]):
     """A single turn in a conversation. Entity inside the Conversation aggregate.
 
     Identity is `id` (handled by the Entity base): two messages are the same iff
@@ -20,7 +20,7 @@ class Message(Entity[str]):
 
     def __init__(
         self,
-        id: str,
+        id: uuid.UUID,
         role: MessageRole,
         content: str,
         created_at: datetime,

@@ -1,10 +1,11 @@
 from __future__ import annotations
+import uuid
 
 from app.shared.exceptions.exceptions import NotFoundException, ValidationException
 
 
 class ConversationNotFound(NotFoundException):
-    def __init__(self, conversation_id: str) -> None:
+    def __init__(self, conversation_id: uuid.UUID) -> None:
         super().__init__(f"Conversation '{conversation_id}' not found")
 
 

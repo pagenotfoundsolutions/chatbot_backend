@@ -14,7 +14,7 @@ _DEFAULT_TITLE = "New chat"
 from app.shared.kernel.utils import generate_uuid, utc_now
 
 
-class Conversation(AggregateRoot[str]):
+class Conversation(AggregateRoot[uuid.UUID]):
     """Aggregate root for a chat.
 
     All message mutations go THROUGH this root so the aggregate stays consistent
@@ -25,8 +25,8 @@ class Conversation(AggregateRoot[str]):
 
     def __init__(
         self,
-        id: str,
-        auth_user_id: str,
+        id: uuid.UUID,
+        auth_user_id: uuid.UUID,
         title: str,
         created_at: datetime,
         updated_at: datetime,
@@ -41,7 +41,7 @@ class Conversation(AggregateRoot[str]):
 
     # --- factory -----------------------------------------------------------
     @classmethod
-    def start(cls, auth_user_id: str, title: str | None = None) -> "Conversation":
+    def start(cls, auth_user_id: uuid.UUID, title: str | None = None) -> "Conversation":
         """Open a brand-new, empty conversation."""
         now = utc_now()
         clean = (title or "").strip() or _DEFAULT_TITLE
@@ -49,7 +49,7 @@ class Conversation(AggregateRoot[str]):
 
     # --- read-only state ---------------------------------------------------
     @property
-    def auth_user_id(self) -> str:
+    def auth_user_id(self) -> uuid.UUID:
         return self._auth_user_id
 
     @property

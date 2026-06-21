@@ -1,4 +1,5 @@
 from __future__ import annotations
+import uuid
 
 from abc import abstractmethod
 
@@ -16,9 +17,9 @@ class ConversationRepositoryPort(BaseRepository[Conversation, str]):
     """
 
     @abstractmethod
-    def list(self, auth_user_id: str, page: int, size: int) -> tuple[list[Conversation], int]:
+    def list(self, auth_user_id: uuid.UUID, page: int, size: int) -> tuple[list[Conversation], int]:
         """All conversations, most-recently-active first."""
 
     @abstractmethod
-    def list_messages(self, conversation_id: str, auth_user_id: str, page: int, size: int) -> tuple[list[Message], int] | None:
+    def list_messages(self, conversation_id: uuid.UUID, auth_user_id: uuid.UUID, page: int, size: int) -> tuple[list[Message], int] | None:
         """Paginated list of messages for a specific conversation. Returns None if conversation not found/owned."""

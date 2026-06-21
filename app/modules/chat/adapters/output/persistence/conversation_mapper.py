@@ -1,4 +1,5 @@
 from __future__ import annotations
+import uuid
 
 from app.modules.chat.adapters.output.persistence.models.conversation_model import (
     ConversationModel,
@@ -41,7 +42,7 @@ class ConversationMapper:
         )
 
     @staticmethod
-    def message_to_model(message: Message, conversation_id: str) -> MessageModel:
+    def message_to_model(message: Message, conversation_id: uuid.UUID) -> MessageModel:
         return MessageModel(
             id=message.id,
             conversation_id=conversation_id,

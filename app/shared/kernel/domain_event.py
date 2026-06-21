@@ -19,5 +19,5 @@ class DomainEvent:
     `EventPublisherPort`.
     """
 
-    event_id: str = field(default_factory=generate_uuid, init=False)
+    event_id: uuid.UUID = field(default_factory=generate_uuid, init=False)
     occurred_at: datetime = field(default_factory=utc_now, init=False)

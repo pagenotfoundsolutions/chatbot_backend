@@ -1,4 +1,5 @@
 from __future__ import annotations
+import uuid
 
 from sqlalchemy import select, func, update
 from sqlalchemy.orm import Session, noload
@@ -56,11 +57,11 @@ class SqlAlchemyConversationRepository(ConversationRepositoryPort):
         if new_messages:
             self._session.add_all(new_messages)
 
-    def get(self, id: str) -> Conversation | None:
+    def get(self, id: uuid.UUID) -> Conversation | None:
         model = self._session.get(ConversationModel, id)
         return ConversationMapper.to_domain(model) if model is not None else None
 
-    def list(self, auth_user_id: str, page: int, size: int) -> tuple[list[Conversation], int]:
+    def list(self, auth_user_id: uuid.UUID, page: int, size: int) -> tuple[list[Conversation], int]:
         total = self._session.scalar(
             select(func.count()).select_from(ConversationModel).where(ConversationModel.auth_user_id == auth_user_id)
         ) or 0
@@ -73,7 +74,7 @@ class SqlAlchemyConversationRepository(ConversationRepositoryPort):
         models = self._session.execute(stmt).scalars().all()
         return [ConversationMapper.to_domain(m) for m in models], total
 
-    def list_messages(self, conversation_id: str, auth_user_id: str, page: int, size: int) -> tuple[list[Message], int] | None:
+    def list_messages(self, conversation_id: uuid.UUID, auth_user_id: uuid.UUID, page: int, size: int) -> tuple[list[Message], int] | None:
         exists = self._session.scalar(
             select(ConversationModel.id).where(ConversationModel.id == conversation_id, ConversationModel.auth_user_id == auth_user_id)
         )
@@ -91,6 +92,6 @@ class SqlAlchemyConversationRepository(ConversationRepositoryPort):
         models = self._session.execute(stmt).scalars().all()
         return [ConversationMapper.message_to_domain(m) for m in models], total
 
-    def delete(self, id: str) -> None:
+    def delete(self, id: uuid.UUID) -> None:
         stmt = update(ConversationModel).where(ConversationModel.id == id).values(deleted_at=func.now())
         self._session.execute(stmt)

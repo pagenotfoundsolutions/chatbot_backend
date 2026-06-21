@@ -20,7 +20,7 @@ class RefreshHandler(RefreshUseCase):
 
     def execute(self, command: RefreshCommand) -> TokenResult:
         # Retrieve the old refresh token
-        old_token = self.refresh_token_repo.get(command.refresh_token)
+        old_token = self.refresh_token_repo.get_by_token(command.refresh_token)
         if not old_token or not old_token.is_valid():
             raise InvalidTokenException("Invalid or expired refresh token.")
 
