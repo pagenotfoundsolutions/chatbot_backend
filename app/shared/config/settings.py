@@ -1,6 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -27,6 +28,18 @@ class Settings(BaseSettings):
 
     # --- database ---
     database_url: str
+
+    postgres_user: str
+    postgres_password: str
+    postgres_db: str
+
+    @model_validator(mode="after")
+    def interpolate_db_url(self) -> "Settings":
+        if self.database_url:
+            self.database_url = self.database_url.replace("${POSTGRES_USER}", self.postgres_user)
+            self.database_url = self.database_url.replace("${POSTGRES_PASSWORD}", self.postgres_password)
+            self.database_url = self.database_url.replace("${POSTGRES_DB}", self.postgres_db)
+        return self
 
     # --- storage paths ---
     upload_dir: str
