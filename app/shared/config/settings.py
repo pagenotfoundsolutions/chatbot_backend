@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     )
 
     # --- project metadata ---
-    name: str
+    project_name: str
     description: str
     version: str
 

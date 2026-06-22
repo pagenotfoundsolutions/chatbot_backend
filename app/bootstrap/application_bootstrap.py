@@ -30,7 +30,7 @@ def create_app() -> FastAPI:
     init_db()
 
     app = FastAPI(
-        title=settings.name,
+        title=settings.project_name,
         description=settings.description,
         version=settings.version,
     )
