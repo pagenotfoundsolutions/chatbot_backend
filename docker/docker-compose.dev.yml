@@ -14,7 +14,7 @@ services:
       # Sync source code for hot reloading
       - ../:/app
       # Store uploads in a managed Docker volume instead of syncing to host
-      - dev_app_uploads:/app/${UPLOAD_DIR:-storage/uploads}
+      - app_uploads:/app/${UPLOAD_DIR:-storage/uploads}
     env_file:
       - ../env/.env.dev
     environment:
@@ -34,7 +34,7 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - dev_postgres_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
 
   # pgadmin:
   #   image: dpage/pgadmin4
@@ -47,5 +47,7 @@ services:
   #     - db
 
 volumes:
-  dev_postgres_data:
-  dev_app_uploads:
+  db_data:
+    name: ${PROJECT_NAME:-chatbot_backend}_dev_db_data
+  app_uploads:
+    name: ${PROJECT_NAME:-chatbot_backend}_dev_app_uploads
