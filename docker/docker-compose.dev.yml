@@ -1,10 +1,10 @@
 version: '3.8'
 
-name: ${PROJECT_NAME:-chatbot_backend}_dev
+name: ${PROJECT_NAME:-chatbot}_dev
 
 services:
   app:
-    container_name: ${PROJECT_NAME:-chatbot_backend}_dev_app
+    container_name: ${PROJECT_NAME:-chatbot}_dev_app
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -25,7 +25,7 @@ services:
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
   db:
-    container_name: ${PROJECT_NAME:-chatbot_backend}_dev_db
+    container_name: ${PROJECT_NAME:-chatbot}_dev_db
     image: postgres:15-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-admin}
@@ -48,6 +48,6 @@ services:
 
 volumes:
   db_data:
-    name: ${PROJECT_NAME:-chatbot_backend}_dev_db_data
+    name: ${PROJECT_NAME:-chatbot}_dev_db_data
   app_uploads:
-    name: ${PROJECT_NAME:-chatbot_backend}_dev_app_uploads
+    name: ${PROJECT_NAME:-chatbot}_dev_app_uploads
