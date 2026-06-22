@@ -11,3 +11,6 @@ class SendMessageCommand:
     conversation_id: uuid.UUID
     auth_user_id: uuid.UUID
     content: str
+    provider_id: uuid.UUID
+    model_id: uuid.UUID
+    

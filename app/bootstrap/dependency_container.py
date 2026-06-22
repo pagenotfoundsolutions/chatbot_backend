@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from app.modules.chat.infrastructure.config.chat_config import ChatConfig, get_chat_config
 from app.shared.config.settings import Settings, get_settings
 
 
@@ -19,9 +18,7 @@ class DependencyContainer:
     def settings(self) -> Settings:
         return get_settings()
 
-    @property
-    def chat_config(self) -> ChatConfig:
-        return get_chat_config()
+
 
 
 @lru_cache

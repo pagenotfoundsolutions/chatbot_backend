@@ -1,3 +1,4 @@
+from app.modules.ai_providers.adapters.output.persistence.models.ai_model_model import AIModelModel
 import uuid
 from typing import List, Optional
 from sqlalchemy.orm import Session
@@ -26,4 +27,8 @@ class SqlAlchemyProviderRepository(ProviderRepositoryPort):
 
     def get_all_providers(self) -> List[AIProvider]:
         models = self._db.query(AIProviderModel).all()
+        return [ProviderMapper.to_domain(m) for m in models]
+    
+    def get_all_providers_with_active_models(self) -> List[AIProvider]:
+        models = self._db.query(AIProviderModel).filter(AIProviderModel.models.any(AIModelModel.is_active == True)).all()
         return [ProviderMapper.to_domain(m) for m in models]

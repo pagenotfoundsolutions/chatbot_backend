@@ -7,15 +7,15 @@ from app.modules.chat.adapters.input.http.schemas import (
     SendMessageResponse,
 )
 from app.modules.chat.application.dto.send_message_result import SendMessageResult
-from app.modules.chat.domain.entities.conversation import Conversation
-from app.modules.chat.domain.entities.message import Message
+from app.modules.chat.application.dto.conversation_dto import ConversationDTO
+from app.modules.chat.application.dto.message_dto import MessageDTO
 
 
 class ChatViewMapper:
     """Domain aggregate -> API response schemas (the inbound adapter's seam)."""
 
     @staticmethod
-    def message(message: Message) -> MessageResponse:
+    def message(message: MessageDTO) -> MessageResponse:
         return MessageResponse(
             id=message.id,
             role=message.role,
@@ -24,7 +24,7 @@ class ChatViewMapper:
         )
 
     @staticmethod
-    def summary(conversation: Conversation) -> ConversationSummaryResponse:
+    def summary(conversation: ConversationDTO) -> ConversationSummaryResponse:
         return ConversationSummaryResponse(
             id=conversation.id,
             title=conversation.title,
@@ -33,7 +33,7 @@ class ChatViewMapper:
         )
 
     @staticmethod
-    def detail(conversation: Conversation) -> ConversationResponse:
+    def detail(conversation: ConversationDTO) -> ConversationResponse:
         return ConversationResponse(
             id=conversation.id,
             title=conversation.title,

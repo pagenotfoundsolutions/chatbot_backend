@@ -153,7 +153,11 @@ class ChatController:
     ) -> SendMessageResponse:
         result = use_case.execute(
             SendMessageCommand(
-                conversation_id=conversation_id, auth_user_id=auth_user_id, content=request.content
+                conversation_id=conversation_id, 
+                auth_user_id=auth_user_id, 
+                content=request.content,
+                provider_id=request.provider_id,
+                model_id=request.model_id
             )
         )
         return ChatViewMapper.send_result(result)
@@ -167,7 +171,11 @@ class ChatController:
     ) -> Iterator[str]:
         """Yield Server-Sent Events: one `token` event per chunk, then `done`."""
         command = SendMessageCommand(
-            conversation_id=conversation_id, auth_user_id=auth_user_id, content=request.content
+            conversation_id=conversation_id, 
+            auth_user_id=auth_user_id, 
+            content=request.content,
+            provider_id=request.provider_id,
+            model_id=request.model_id
         )
         
         # Eagerly call execute_stream to catch any validation errors synchronously

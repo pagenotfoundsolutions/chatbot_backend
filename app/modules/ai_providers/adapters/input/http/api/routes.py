@@ -1,3 +1,5 @@
+from app.modules.ai_providers.adapters.input.http.api.dependencies import get_list_providers_with_active_models_use_case
+from app.modules.ai_providers.application.ports.input.list_providers_with_active_models_usecase import ListProvidersWithActiveModelsUseCase
 import uuid
 from typing import List
 
@@ -35,11 +37,19 @@ def list_providers(
         data=AIProvidersApiController.list_providers(use_case),
     )
 
+@router.get("/providers/with-active-models", response_model=SuccessResp[List[AIProviderResponse]])
+def list_providers_with_active_models(
+    use_case: ListProvidersWithActiveModelsUseCase = Depends(get_list_providers_with_active_models_use_case),
+) -> SuccessResp[List[AIProviderResponse]]:
+    return SuccessResp(
+        message="Providers with active models fetched",
+        data=AIProvidersApiController.list_providers_with_active_models(use_case),
+    )
+
 @router.get("/providers/{provider_id}", response_model=SuccessResp[AIProviderResponse])
 def get_provider(
     provider_id: uuid.UUID,
     use_case: GetProviderUseCase = Depends(get_get_provider_use_case),
-    auth_user_id: UUID = Depends(get_current_user_id),
 ) -> SuccessResp[AIProviderResponse]:
     provider = AIProvidersApiController.get_provider(provider_id, use_case)
     if not provider:
@@ -52,7 +62,6 @@ def get_provider(
 @router.get("/models", response_model=SuccessResp[List[AIModelResponse]])
 def list_models(
     use_case: ListModelsUseCase = Depends(get_list_models_use_case),
-    auth_user_id: UUID = Depends(get_current_user_id),
 ) -> SuccessResp[List[AIModelResponse]]:
     return SuccessResp(
         message="Models fetched",
@@ -62,7 +71,6 @@ def list_models(
 @router.get("/models/active", response_model=SuccessResp[List[AIModelResponse]])
 def list_active_models(
     use_case: ListActiveModelsUseCase = Depends(get_list_active_models_use_case),
-    auth_user_id: UUID = Depends(get_current_user_id),
 ) -> SuccessResp[List[AIModelResponse]]:
     return SuccessResp(
         message="Active models fetched",
@@ -73,7 +81,6 @@ def list_active_models(
 def get_model(
     model_id: uuid.UUID,
     use_case: GetModelUseCase = Depends(get_get_model_use_case),
-    auth_user_id: UUID = Depends(get_current_user_id),
 ) -> SuccessResp[AIModelResponse]:
     model = AIProvidersApiController.get_model(model_id, use_case)
     if not model:

@@ -4,6 +4,7 @@ from typing import Optional
 
 from app.shared.kernel.aggregate_root import AggregateRoot
 from app.shared.kernel.utils import generate_uuid, utc_now
+from app.modules.ai_providers.domain.entities.ai_model import AIModel
 
 class AIProvider(AggregateRoot[uuid.UUID]):
     """A single provider of AI models (e.g., OpenAI, Anthropic, Gemini).
@@ -22,6 +23,7 @@ class AIProvider(AggregateRoot[uuid.UUID]):
         api_key: str,
         created_at: datetime,
         updated_at: datetime,
+        ai_models: Optional[list[AIModel]] = None
     ) -> None:
         """
         __init__ is strictly used to REBUILD the object (e.g., when loading from Database).
@@ -39,6 +41,7 @@ class AIProvider(AggregateRoot[uuid.UUID]):
         self._api_key = api_key
         self._created_at = created_at
         self._updated_at = updated_at
+        self._ai_models = ai_models if ai_models is not None else []
 
     @classmethod
     def create(
@@ -110,3 +113,9 @@ class AIProvider(AggregateRoot[uuid.UUID]):
     @property
     def updated_at(self) -> datetime:
         return self._updated_at
+    
+    @property
+    def ai_models(self) -> list[AIModel]:
+        return self._ai_models
+
+    

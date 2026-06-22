@@ -12,7 +12,8 @@ class AIProvidersViewMapper:
             description=provider.description,
             api_base_url=provider.api_base_url,
             created_at=provider.created_at,
-            updated_at=provider.updated_at
+            updated_at=provider.updated_at,
+            models=[AIProvidersViewMapper.model(m) for m in provider.ai_models]
         )
 
     @staticmethod

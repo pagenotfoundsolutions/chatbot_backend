@@ -9,7 +9,7 @@ from app.modules.chat.application.ports.output.conversation_repository_port impo
 from app.modules.chat.application.queries.list_conversations.list_conversations_query import (
     ListConversationsQuery,
 )
-from app.modules.chat.domain.entities.conversation import Conversation
+from app.modules.chat.application.dto.conversation_dto import ConversationDTO
 
 
 class ListConversationsHandler(ListConversationsUseCase):
@@ -18,5 +18,10 @@ class ListConversationsHandler(ListConversationsUseCase):
     def __init__(self, repository: ConversationRepositoryPort) -> None:
         self._repository = repository
 
-    def execute(self, query: ListConversationsQuery) -> tuple[list[Conversation], int]:
-        return self._repository.list(query.auth_user_id, query.page, query.size)
+    def execute(self, query: ListConversationsQuery) -> tuple[list[ConversationDTO], int]:
+        conversations, total = self._repository.list(
+            auth_user_id=query.auth_user_id,
+            page=query.page,
+            size=query.size,
+        )
+        return [ConversationDTO.from_entity(c) for c in conversations], total

@@ -19,6 +19,9 @@ class UpdateConversationRequest(BaseModel):
 
 class SendMessageRequest(BaseModel):
     content: str = Field(min_length=1)
+    provider_id: uuid.UUID 
+    model_id: uuid.UUID 
+    
 
 
 # --- responses --------------------------------------------------------------

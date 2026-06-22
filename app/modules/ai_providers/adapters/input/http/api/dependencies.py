@@ -1,3 +1,5 @@
+from app.modules.ai_providers.application.ports.input.list_providers_with_active_models_usecase import ListProvidersWithActiveModelsUseCase
+from app.modules.ai_providers.application.queries.list_providers_with_active_models_handler import ListProvidersWithActiveModelsHandler
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
@@ -52,3 +54,8 @@ def get_get_model_use_case(
     repository: ModelRepositoryPort = Depends(get_model_repository),
 ) -> GetModelUseCase:
     return GetModelHandler(repository)
+
+def get_list_providers_with_active_models_use_case(
+    repository: ProviderRepositoryPort = Depends(get_provider_repository),
+) -> ListProvidersWithActiveModelsUseCase:
+    return ListProvidersWithActiveModelsHandler(repository)

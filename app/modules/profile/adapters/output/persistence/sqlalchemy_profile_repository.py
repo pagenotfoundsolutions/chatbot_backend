@@ -14,6 +14,7 @@ class SqlAlchemyProfileRepository(ProfileRepositoryPort):
     def save(self, profile: Profile) -> None:
         db_profile = ProfileMapper.to_persistence(profile)
         self.session.merge(db_profile)
+        self.session.flush()
 
     def get(self, id: UUID) -> Optional[Profile]:
         db_profile = self.session.query(ProfileModel).filter(ProfileModel.id == id).first()

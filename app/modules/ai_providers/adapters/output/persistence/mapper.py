@@ -17,7 +17,8 @@ class ProviderMapper:
             api_base_url=model.api_base_url,
             api_key=model.api_key,
             created_at=model.created_at,
-            updated_at=model.updated_at
+            updated_at=model.updated_at,
+            ai_models=[ModelMapper.to_domain(ai_model) for ai_model in model.models]
         )
 
     @staticmethod

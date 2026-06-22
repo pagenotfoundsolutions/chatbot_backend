@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import uuid
 from collections.abc import Iterator, Sequence
 
 from app.modules.chat.application.ports.output.llm_port import LLMPort
@@ -15,7 +16,7 @@ class EchoLLMAdapter(LLMPort):
     (`LLM_PROVIDER=echo`); switch to a real one by setting `LLM_PROVIDER`.
     """
 
-    def generate(self, history: Sequence[Message]) -> str:
+    def generate(self, history: Sequence[Message], provider_id: uuid.UUID, model_id: uuid.UUID) -> str:
         last_user = next(
             (m for m in reversed(history) if m.role == MessageRole.USER),
             None,
@@ -24,6 +25,6 @@ class EchoLLMAdapter(LLMPort):
             return "Hello! How can I help you today?"
         return f"You said: {last_user.content}"
 
-    def stream(self, history: Sequence[Message]) -> Iterator[str]:
-        for token in self.generate(history).split(" "):
+    def stream(self, history: Sequence[Message], provider_id: uuid.UUID, model_id: uuid.UUID) -> Iterator[str]:
+        for token in self.generate(history, provider_id, model_id).split(" "):
             yield token + " "

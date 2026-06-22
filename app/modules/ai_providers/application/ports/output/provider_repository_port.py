@@ -16,3 +16,10 @@ class ProviderRepositoryPort(BaseRepository[AIProvider, uuid.UUID]):
         Returns a list of all AI providers.
         """
         pass
+    
+    @abstractmethod
+    def get_all_providers_with_active_models(self) -> List[AIProvider]:
+        """
+        Returns a list of all AI providers with their active models.
+        """
+        pass

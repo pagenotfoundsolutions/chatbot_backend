@@ -11,6 +11,7 @@ class AIProviderResponse(BaseModel):
     api_base_url: str
     created_at: datetime
     updated_at: datetime
+    models: List[AIModelResponse]=[]
 
 class AIModelResponse(BaseModel):
     id: uuid.UUID

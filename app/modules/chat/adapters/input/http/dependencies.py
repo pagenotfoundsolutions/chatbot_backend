@@ -55,7 +55,6 @@ from app.modules.chat.application.queries.list_conversations.list_conversations_
 from app.modules.chat.application.queries.list_messages.list_messages_handler import (
     ListMessagesHandler,
 )
-from app.modules.chat.infrastructure.config.chat_config import get_chat_config
 from app.shared.database.session import get_db
 
 # Composition root for the chat hexagon: the single place that binds abstract
@@ -63,17 +62,23 @@ from app.shared.database.session import get_db
 # LLM_PROVIDER in .env — nothing here changes.
 
 
-@lru_cache
-def get_llm() -> LLMPort:
-    """Build the LLM adapter once (singleton) from config."""
-    config = get_chat_config()
-    
-    if config.provider.lower() == "echo":
-        from app.modules.chat.adapters.output.llm.echo_llm_adapter import EchoLLMAdapter
-        return EchoLLMAdapter()
+from app.modules.ai_providers.application.ports.input.get_provider_config_use_case import GetProviderConfigUseCase
 
-    from app.modules.chat.adapters.output.llm.nvidia_llm_adapter import NvidiaLLMAdapter
-    return NvidiaLLMAdapter(config)
+def get_provider_config_use_case(db: Session = Depends(get_db)) -> GetProviderConfigUseCase:
+    """Build the Use Case from ai_providers."""
+    from app.modules.ai_providers.adapters.output.persistence.sqlalchemy_provider_repository import SqlAlchemyProviderRepository
+    from app.modules.ai_providers.adapters.output.persistence.sqlalchemy_model_repository import SqlAlchemyModelRepository
+    from app.modules.ai_providers.application.queries.get_provider_config.get_provider_config_handler import GetProviderConfigHandler
+    
+    provider_repo = SqlAlchemyProviderRepository(db)
+    model_repo = SqlAlchemyModelRepository(db)
+    
+    return GetProviderConfigHandler(provider_repo, model_repo)
+
+def get_llm() -> LLMPort:
+    """Build the dynamic LLM adapter."""
+    from app.modules.chat.adapters.output.llm.dynamic_llm_adapter import DynamicLLMAdapter
+    return DynamicLLMAdapter()
 
 
 def get_conversation_repository(
@@ -91,8 +96,13 @@ def get_create_conversation_use_case(
 def get_send_message_use_case(
     repository: ConversationRepositoryPort = Depends(get_conversation_repository),
     llm: LLMPort = Depends(get_llm),
+    get_provider_config: GetProviderConfigUseCase = Depends(get_provider_config_use_case)
 ) -> SendMessageUseCase:
-    return SendMessageHandler(repository=repository, llm=llm)
+    return SendMessageHandler(
+        repository=repository, 
+        llm=llm, 
+        get_provider_config=get_provider_config
+    )
 
 
 def get_get_conversation_use_case(

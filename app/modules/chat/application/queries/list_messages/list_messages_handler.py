@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from app.modules.chat.application.dto.message_dto import MessageDTO
 from app.modules.chat.application.ports.input.list_messages_use_case import (
     ListMessagesUseCase,
 )
@@ -19,10 +20,11 @@ class ListMessagesHandler(ListMessagesUseCase):
     def __init__(self, repository: ConversationRepositoryPort) -> None:
         self._repository = repository
 
-    def execute(self, query: ListMessagesQuery) -> tuple[list[Message], int]:
+    def execute(self, query: ListMessagesQuery) -> tuple[list[MessageDTO], int]:
         result = self._repository.list_messages(
             query.conversation_id, query.auth_user_id, query.page, query.size
         )
         if result is None:
             raise ConversationNotFound(query.conversation_id)
-        return result
+        messages, total = result
+        return [MessageDTO.from_entity(m) for m in messages], total

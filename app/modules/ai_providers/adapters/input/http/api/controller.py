@@ -1,3 +1,4 @@
+from app.modules.ai_providers.application.ports.input.list_providers_with_active_models_usecase import ListProvidersWithActiveModelsUseCase
 import uuid
 from typing import List, Optional
 
@@ -39,3 +40,8 @@ class AIProvidersApiController:
         if not model:
             return None
         return AIProvidersViewMapper.model(model)
+    
+    @staticmethod
+    def list_providers_with_active_models(use_case: ListProvidersWithActiveModelsUseCase) -> List[AIProviderResponse]:
+        providers = use_case.execute()
+        return [AIProvidersViewMapper.provider(p) for p in providers]

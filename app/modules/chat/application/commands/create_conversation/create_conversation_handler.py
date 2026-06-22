@@ -10,6 +10,7 @@ from app.modules.chat.application.ports.output.conversation_repository_port impo
     ConversationRepositoryPort,
 )
 from app.modules.chat.domain.entities.conversation import Conversation
+from app.modules.chat.application.dto.conversation_dto import ConversationDTO
 
 
 class CreateConversationHandler(CreateConversationUseCase):
@@ -18,7 +19,10 @@ class CreateConversationHandler(CreateConversationUseCase):
     def __init__(self, repository: ConversationRepositoryPort) -> None:
         self._repository = repository
 
-    def execute(self, command: CreateConversationCommand) -> Conversation:
-        conversation = Conversation.start(auth_user_id=command.auth_user_id, title=command.title)
+    def execute(self, command: CreateConversationCommand) -> ConversationDTO:
+        conversation = Conversation.start(
+            auth_user_id=command.auth_user_id,
+            title=command.title,
+        )
         self._repository.save(conversation)
-        return conversation
+        return ConversationDTO.from_entity(conversation)
