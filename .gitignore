@@ -18,7 +18,6 @@ wheels/
 # ===== Virtual environments =====
 .venv/
 venv/
-env/
 ENV/
 env.bak/
 venv.bak/
@@ -28,9 +27,6 @@ venv.bak/
 .uv/
 
 # ===== Environment / secrets =====
-.env
-.env.*
-!.env.example
 *.pem
 
 # ===== Testing / type-check / lint caches =====
