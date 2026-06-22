@@ -37,11 +37,11 @@ pipeline {
                 script {
                     echo "🔨 Building builder image to verify dependencies..."
                     
-                    // Build the 'builder' stage to ensure dependencies resolve successfully
+                    // Build the image to ensure dependencies resolve successfully
                     if (isUnix()) {
-                        sh "docker build -f docker/Dockerfile --target builder -t ${APP_NAME}:test ."
+                        sh "docker build -f docker/Dockerfile -t ${APP_NAME}:test ."
                     } else {
-                        bat "docker build -f docker/Dockerfile --target builder -t ${APP_NAME}:test ."
+                        bat "docker build -f docker/Dockerfile -t ${APP_NAME}:test ."
                     }
                     
                     echo "✅ Dependencies verified successfully!"
