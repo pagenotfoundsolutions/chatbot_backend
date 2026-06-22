@@ -12,3 +12,7 @@ class NotFoundException(AppException):
 class ValidationException(AppException):
     def __init__(self, message: str = "Validation error occurred"):
         super().__init__(message=message, status_code=400)
+
+class UnauthorizedException(AppException):
+    def __init__(self, message: str = "Unauthorized"):
+        super().__init__(message=message, status_code=401)
