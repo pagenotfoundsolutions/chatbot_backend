@@ -1,7 +1,10 @@
 version: '3.8'
 
+name: ${PROJECT_NAME:-chatbot_backend}_prod
+
 services:
   app:
+    container_name: ${PROJECT_NAME:-chatbot_backend}_prod_app
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -20,6 +23,7 @@ services:
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
   db:
+    container_name: ${PROJECT_NAME:-chatbot_backend}_prod_db
     image: postgres:15-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-admin}
