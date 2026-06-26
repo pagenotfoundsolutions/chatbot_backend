@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     project_name: str
     description: str
     version: str
+    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"]
 
     # --- database ---
     database_url: str

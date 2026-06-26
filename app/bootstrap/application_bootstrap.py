@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import IntegrityError
 
 from app.bootstrap.dependency_container import get_container
@@ -33,6 +34,14 @@ def create_app() -> FastAPI:
         title=settings.project_name,
         description=settings.description,
         version=settings.version,
+    )
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     # Map every domain/application AppException to a uniform ErrorResp payload.
