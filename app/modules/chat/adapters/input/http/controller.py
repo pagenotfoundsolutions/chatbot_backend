@@ -157,7 +157,8 @@ class ChatController:
                 auth_user_id=auth_user_id, 
                 content=request.content,
                 provider_id=request.provider_id,
-                model_id=request.model_id
+                model_id=request.model_id,
+                thinking_enabled=request.thinking_enabled
             )
         )
         return ChatViewMapper.send_result(result)
@@ -175,7 +176,8 @@ class ChatController:
             auth_user_id=auth_user_id, 
             content=request.content,
             provider_id=request.provider_id,
-            model_id=request.model_id
+            model_id=request.model_id,
+            thinking_enabled=request.thinking_enabled
         )
         
         # Eagerly call execute_stream to catch any validation errors synchronously
@@ -183,9 +185,18 @@ class ChatController:
         stream_iterator = use_case.execute_stream(command)
         
         def _stream() -> Iterator[str]:
-            for chunk in stream_iterator:
-                yield _sse("token", {"content": chunk})
-            yield _sse("done", {"conversation_id": conversation_id})
+            from app.shared.exceptions.exceptions import AppException
+            try:
+                for chunk_type, chunk_content in stream_iterator:
+                    # If chunk_type is "thinking", event name is "thinking"
+                    # If chunk_type is "content", event name is "token"
+                    event_name = "thinking" if chunk_type == "thinking" else "token"
+                    yield _sse(event_name, {"content": chunk_content})
+                yield _sse("done", {"conversation_id": str(conversation_id)})
+            except AppException as e:
+                yield _sse("error", {"detail": e.detail})
+            except Exception as e:
+                yield _sse("error", {"detail": str(e)})
             
         return _stream()
 

@@ -13,5 +13,6 @@ class SendMessageCommand:
     content: str
     provider_id: uuid.UUID
     model_id: uuid.UUID
+    thinking_enabled: bool = False
     file_id: uuid.UUID | None = None
 

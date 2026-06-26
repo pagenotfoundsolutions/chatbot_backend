@@ -125,7 +125,7 @@ class SendMessageHandler(SendMessageUseCase):
         if rag_context:
             messages_for_llm.insert(0, Message.create(MessageRole.SYSTEM, rag_context))
 
-        reply = self._llm.generate(messages_for_llm, config) or ""
+        reply = self._llm.generate(messages_for_llm, config, command.thinking_enabled) or ""
         assistant_message = conversation.post_assistant_message(
             reply.strip() or _EMPTY_REPLY_FALLBACK
         )
@@ -137,7 +137,7 @@ class SendMessageHandler(SendMessageUseCase):
             assistant_message=MessageDTO.from_entity(assistant_message),
         )
 
-    def execute_stream(self, command: SendMessageCommand) -> Iterator[str]:
+    def execute_stream(self, command: SendMessageCommand) -> Iterator[tuple[str, str]]:
         content = self._clean(command.content)
         conversation = self._require(command.conversation_id, command.auth_user_id)
         
@@ -156,13 +156,14 @@ class SendMessageHandler(SendMessageUseCase):
         if rag_context:
             messages_for_llm.insert(0, Message.create(MessageRole.SYSTEM, rag_context))
 
-        def _stream() -> Iterator[str]:
+        def _stream() -> Iterator[tuple[str, str]]:
             chunks: list[str] = []
-            for chunk in self._llm.stream(messages_for_llm, config):
-                if not chunk:
+            for chunk_type, chunk_content in self._llm.stream(messages_for_llm, config, command.thinking_enabled):
+                if not chunk_content:
                     continue
-                chunks.append(chunk)
-                yield chunk
+                if chunk_type == "content":
+                    chunks.append(chunk_content)
+                yield chunk_type, chunk_content
 
             reply = "".join(chunks).strip() or _EMPTY_REPLY_FALLBACK
             conversation.post_assistant_message(reply)

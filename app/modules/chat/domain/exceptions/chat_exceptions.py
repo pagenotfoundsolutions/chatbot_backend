@@ -22,3 +22,8 @@ class ProviderConfigurationNotFound(NotFoundException):
 class RAGRetrievalFailed(AppException):
     def __init__(self, reason: str) -> None:
         super().__init__(f"Failed to retrieve documents for RAG context: {reason}", status_code=500)
+
+
+class LLMProviderError(AppException):
+    def __init__(self, reason: str) -> None:
+        super().__init__(f"LLM Provider Error: {reason}", status_code=502)

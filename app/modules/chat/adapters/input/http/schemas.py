@@ -21,6 +21,7 @@ class SendMessageRequest(BaseModel):
     content: str = Field(min_length=1)
     provider_id: uuid.UUID 
     model_id: uuid.UUID 
+    thinking_enabled: bool = Field(default=False, description="Enable reasoning/thinking tokens for models that support it")
     
 
 

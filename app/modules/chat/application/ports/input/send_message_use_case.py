@@ -17,8 +17,8 @@ class SendMessageUseCase(ABC):
         """Run one full turn and return the persisted result."""
 
     @abstractmethod
-    def execute_stream(self, command: SendMessageCommand) -> Iterator[str]:
-        """Run one turn, streaming the assistant reply as text chunks.
+    def execute_stream(self, command: SendMessageCommand) -> Iterator[tuple[str, str]]:
+        """Run one turn, streaming the assistant reply as text chunks (type, content).
 
         Persists the completed turn once the stream is exhausted.
         """
