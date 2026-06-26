@@ -13,4 +13,5 @@ class SendMessageCommand:
     content: str
     provider_id: uuid.UUID
     model_id: uuid.UUID
-    
+    file_id: uuid.UUID | None = None
+

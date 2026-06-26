@@ -93,15 +93,20 @@ def get_create_conversation_use_case(
     return CreateConversationHandler(repository)
 
 
+from app.modules.rag.application.ports.input.search_chunks_use_case import SearchChunksUseCase
+from app.modules.rag.adapters.input.http.dependencies import get_search_chunks_use_case
+
 def get_send_message_use_case(
     repository: ConversationRepositoryPort = Depends(get_conversation_repository),
     llm: LLMPort = Depends(get_llm),
-    get_provider_config: GetProviderConfigUseCase = Depends(get_provider_config_use_case)
+    get_provider_config: GetProviderConfigUseCase = Depends(get_provider_config_use_case),
+    search_chunks: SearchChunksUseCase = Depends(get_search_chunks_use_case)
 ) -> SendMessageUseCase:
     return SendMessageHandler(
         repository=repository, 
         llm=llm, 
-        get_provider_config=get_provider_config
+        get_provider_config=get_provider_config,
+        search_chunks=search_chunks
     )
 
 
