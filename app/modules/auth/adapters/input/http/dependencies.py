@@ -17,9 +17,14 @@ from app.modules.auth.application.commands.refresh.refresh_handler import Refres
 from app.modules.auth.adapters.output.persistence.sqlalchemy_refresh_token_repository import SqlAlchemyRefreshTokenRepository
 from app.modules.auth.adapters.output.security.jwt_token_generator import PyJwtTokenGenerator
 
+from app.shared.services.email import SmtpEmailAdapter
+from app.modules.auth.application.commands.verify_otp.verify_otp_handler import VerifyOtpHandler
+from app.modules.auth.application.commands.resend_otp.resend_otp_handler import ResendOtpHandler
+
 # State-less providers as Singletons
 password_hasher = BcryptPasswordHasher()
 token_generator = PyJwtTokenGenerator()
+email_adapter = SmtpEmailAdapter()
 
 def get_register_use_case(
     db_session: Session = Depends(get_db)
@@ -27,7 +32,8 @@ def get_register_use_case(
     user_repository = SqlAlchemyAuthUserRepository(session=db_session)
     return RegisterHandler(
         user_repo=user_repository,
-        password_hasher=password_hasher
+        password_hasher=password_hasher,
+        email_service=email_adapter
     )
 
 def get_login_use_case(
@@ -39,7 +45,8 @@ def get_login_use_case(
         user_repo=user_repository,
         password_hasher=password_hasher,
         token_generator=token_generator,
-        refresh_token_repo=refresh_repo
+        refresh_token_repo=refresh_repo,
+        email_service=email_adapter
     )
 
 def get_logout_use_case(
@@ -57,3 +64,17 @@ def get_refresh_use_case(
         refresh_token_repo=refresh_repo
     )
 
+def get_verify_otp_use_case(
+    db_session: Session = Depends(get_db)
+) -> VerifyOtpHandler:
+    user_repository = SqlAlchemyAuthUserRepository(session=db_session)
+    return VerifyOtpHandler(user_repo=user_repository)
+
+def get_resend_otp_use_case(
+    db_session: Session = Depends(get_db)
+) -> ResendOtpHandler:
+    user_repository = SqlAlchemyAuthUserRepository(session=db_session)
+    return ResendOtpHandler(
+        user_repo=user_repository,
+        email_service=email_adapter
+    )

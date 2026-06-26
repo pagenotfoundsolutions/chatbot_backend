@@ -9,11 +9,15 @@ class AuthUserMapper:
     @staticmethod
     def to_domain(model: AuthUserModel) -> AuthUser:
         """Converts SQLAlchemy AuthUserModel to Domain User Entity."""
-        return AuthUser(
+        user = AuthUser(
             id=model.id,
             email=Email(model.email),
             hashed_password=model.hashed_password
         )
+        user.is_verified = model.is_verified
+        user.otp_code = model.otp_code
+        user.otp_expires_at = model.otp_expires_at
+        return user
     
     @staticmethod
     def to_persistence(entity: AuthUser) -> AuthUserModel:
@@ -21,5 +25,8 @@ class AuthUserMapper:
         return AuthUserModel(
             id=entity.id,
             email=entity.email.value,
-            hashed_password=entity.hashed_password
+            hashed_password=entity.hashed_password,
+            is_verified=entity.is_verified,
+            otp_code=entity.otp_code,
+            otp_expires_at=entity.otp_expires_at
         )

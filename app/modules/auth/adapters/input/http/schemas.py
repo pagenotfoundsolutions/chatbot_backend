@@ -18,3 +18,10 @@ class TokenResponse(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = "Bearer"
+
+class VerifyOtpRequest(BaseModel):
+    email: EmailStr
+    otp_code: str = Field(..., description="The 6-digit OTP code")
+
+class ResendOtpRequest(BaseModel):
+    email: EmailStr

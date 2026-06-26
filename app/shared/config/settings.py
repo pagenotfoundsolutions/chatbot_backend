@@ -44,6 +44,13 @@ class Settings(BaseSettings):
     # --- storage paths ---
     upload_dir: str
 
+    # --- SMTP ---
+    smtp_host: str
+    smtp_port: int
+    smtp_user: str
+    smtp_password: str
+    smtp_use_tls: bool = True
+
 
 @lru_cache
 def get_settings() -> Settings:

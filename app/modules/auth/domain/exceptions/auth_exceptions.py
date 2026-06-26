@@ -27,3 +27,17 @@ class UnauthorizedException(AppException):
             message=message,
             status_code=403
         )
+
+class AuthUserNotVerifiedException(AppException):
+    def __init__(self, message: str = "User is not verified. Please verify your email via OTP."):
+        super().__init__(
+            message=message,
+            status_code=403
+        )
+
+class InvalidOtpException(AppException):
+    def __init__(self, message: str = "Invalid or expired OTP."):
+        super().__init__(
+            message=message,
+            status_code=400
+        )

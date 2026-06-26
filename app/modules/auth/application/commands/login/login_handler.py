@@ -1,3 +1,4 @@
+import threading
 from datetime import datetime, timedelta
 from app.modules.auth.application.ports.input.login_use_case import LoginUseCase
 from app.modules.auth.application.ports.output.auth_user_repository_port import AuthUserRepositoryPort
@@ -5,10 +6,11 @@ from app.modules.auth.application.ports.output.password_hasher_port import Passw
 from app.modules.auth.application.ports.output.token_generator_port import TokenGeneratorPort
 from app.modules.auth.application.ports.output.refresh_token_repository_port import RefreshTokenRepositoryPort
 from app.modules.auth.application.commands.login.login_command import LoginCommand
-from app.modules.auth.domain.exceptions.auth_exceptions import InvalidCredentialsException
+from app.modules.auth.domain.exceptions.auth_exceptions import InvalidCredentialsException, AuthUserNotVerifiedException
 from app.modules.auth.application.dto.token_result import TokenResult
 from app.modules.auth.domain.entities.refresh_token import RefreshToken
 from app.modules.auth.infrastructure.config.auth_config import get_auth_config
+from app.shared.services.email import EmailPort
 
 class LoginHandler(LoginUseCase):
     def __init__(
@@ -16,12 +18,14 @@ class LoginHandler(LoginUseCase):
         user_repo: AuthUserRepositoryPort,
         password_hasher: PasswordHasherPort,
         token_generator: TokenGeneratorPort,
-        refresh_token_repo: RefreshTokenRepositoryPort
+        refresh_token_repo: RefreshTokenRepositoryPort,
+        email_service: EmailPort
     ):
         self.user_repo = user_repo
         self.password_hasher = password_hasher
         self.token_generator = token_generator
         self.refresh_token_repo = refresh_token_repo
+        self.email_service = email_service
         self.config = get_auth_config()
 
     def execute(self, command: LoginCommand) -> TokenResult:
@@ -31,6 +35,14 @@ class LoginHandler(LoginUseCase):
 
         if not self.password_hasher.verify(command.password, user.hashed_password):
             raise InvalidCredentialsException()
+
+        if not user.is_verified:
+            otp = user.generate_otp()
+            self.user_repo.save(user)
+            def send_email():
+                self.email_service.send_otp(user.email.value, otp)
+            threading.Thread(target=send_email, daemon=True).start()
+            raise AuthUserNotVerifiedException()
 
         access_token = self.token_generator.generate_access_token(user.id)
         refresh_token_str = self.token_generator.generate_refresh_token(user.id)
