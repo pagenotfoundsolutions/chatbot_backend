@@ -1,6 +1,6 @@
 from datetime import datetime
 from langchain_core.tools import tool
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class CurrentTimeInput(BaseModel):
     pass
