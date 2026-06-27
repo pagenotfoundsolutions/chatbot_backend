@@ -78,7 +78,8 @@ def get_provider_config_use_case(db: Session = Depends(get_db)) -> GetProviderCo
 def get_llm() -> LLMPort:
     """Build the dynamic LLM adapter."""
     from app.modules.chat.adapters.output.llm.dynamic_llm_adapter import DynamicLLMAdapter
-    return DynamicLLMAdapter()
+    from app.modules.tools.adapters.input.http.dependencies import get_all_tools_use_case
+    return DynamicLLMAdapter(get_all_tools_use_case=get_all_tools_use_case())
 
 
 def get_conversation_repository(
