@@ -32,6 +32,7 @@ from app.modules.chat.domain.exceptions.chat_exceptions import (
 )
 from app.modules.chat.application.dto.conversation_dto import ConversationDTO
 from app.modules.chat.application.dto.message_dto import MessageDTO
+from app.modules.chat.application.services.cancellation_registry import StreamCancellationRegistry
 
 
 _EMPTY_REPLY_FALLBACK = "(no response)"
@@ -95,6 +96,7 @@ class SendMessageHandler(SendMessageUseCase):
             raise ModelCapabilityError("streaming")
 
         def _stream() -> Iterator[tuple[str, str]]:
+            StreamCancellationRegistry.clear(command.conversation_id)
             chunks: list[str] = []
             reasoning_chunks: list[str] = []
             for chunk_type, chunk_content in self._agent_port.stream_graph(
@@ -104,6 +106,10 @@ class SendMessageHandler(SendMessageUseCase):
                 system_prompt=system_prompt,
                 tools=tools
             ):
+                if StreamCancellationRegistry.is_cancelled(command.conversation_id):
+                    logger.info(f"Stream cancelled for conversation {command.conversation_id}")
+                    break
+                    
                 if not chunk_content:
                     continue
                 if chunk_type == "content":
@@ -112,6 +118,7 @@ class SendMessageHandler(SendMessageUseCase):
                     reasoning_chunks.append(chunk_content)
                 yield chunk_type, chunk_content
 
+            StreamCancellationRegistry.clear(command.conversation_id)
             reply = "".join(chunks).strip() or _EMPTY_REPLY_FALLBACK
             conversation.post_assistant_message(reply)
             self._repository.save(conversation)
@@ -131,6 +138,9 @@ class SendMessageHandler(SendMessageUseCase):
         user_message = conversation.post_user_message(content)
         
         tools = list(self._get_all_tools.execute(command.auth_user_id, command.file_id)) if self._get_all_tools else []
+        if not config.supports_tools:
+            tools = []
+            
         self._validate_capabilities(command, config, tools)
         
         system_prompt = "You are a helpful assistant."
@@ -171,8 +181,8 @@ class SendMessageHandler(SendMessageUseCase):
         if command.thinking_enabled and not config.supports_reasoning:
             raise ModelCapabilityError("reasoning/thinking")
             
-        if tools and not config.supports_tools:
-            raise ModelCapabilityError("tool calling")
+        # We don't raise an error for tools. If a model doesn't support tools, 
+        # we just won't pass them to the graph.
 
     def _clean(self, content: str | None) -> str:
         cleaned = (content or "").strip()
