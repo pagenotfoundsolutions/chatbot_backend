@@ -23,6 +23,7 @@ dependencies = [
     "langchain-text-splitters>=1.1.2",
     "langgraph>=0.2.0",
     "lxml>=6.1.1",
+    "mcp>=1.28.1",
     "numexpr>=2.10.0",
     "numpy>=2.4.6",
     "openpyxl>=3.1.5",
