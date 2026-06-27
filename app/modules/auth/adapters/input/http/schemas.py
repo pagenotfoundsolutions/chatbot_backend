@@ -21,7 +21,7 @@ class TokenResponse(BaseModel):
 
 class VerifyOtpRequest(BaseModel):
     email: EmailStr
-    otp_code: str = Field(..., description="The 6-digit OTP code")
+    otp_code: str = Field(..., description="The 4-digit OTP code")
 
 class ResendOtpRequest(BaseModel):
     email: EmailStr

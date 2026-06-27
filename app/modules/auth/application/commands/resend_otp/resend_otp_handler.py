@@ -25,4 +25,4 @@ class ResendOtpHandler:
             
         threading.Thread(target=send_email, daemon=True).start()
         
-        return {"message": "If the email is registered, an OTP has been sent."}
+        return {"message": "If the email is registered, an OTP has been sent.", "otp_code": otp}

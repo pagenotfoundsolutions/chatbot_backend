@@ -36,4 +36,4 @@ class RegisterHandler(RegisterUseCase):
             
         threading.Thread(target=send_email, daemon=True).start()
         
-        return RegisterResult(id=user.id, email=user.email.value)
+        return RegisterResult(id=user.id, email=user.email.value, otp_code=otp)

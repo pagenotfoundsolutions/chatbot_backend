@@ -35,8 +35,8 @@ class AuthUser(AggregateRoot[UUID]):
         )
 
     def generate_otp(self) -> str:
-        """Generate a 6-digit OTP and set its expiry to 10 minutes from now."""
-        self.otp_code = str(random.randint(100000, 999999))
+        """Generate a 4-digit OTP and set its expiry to 10 minutes from now."""
+        self.otp_code = str(random.randint(1000, 9999))
         self.otp_expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
         return self.otp_code
 
