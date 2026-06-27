@@ -10,7 +10,6 @@ from app.modules.chat.application.ports.output.conversation_repository_port impo
 from app.modules.chat.application.queries.list_messages.list_messages_query import (
     ListMessagesQuery,
 )
-from app.modules.chat.domain.entities.message import Message
 from app.modules.chat.domain.exceptions.chat_exceptions import ConversationNotFound
 
 

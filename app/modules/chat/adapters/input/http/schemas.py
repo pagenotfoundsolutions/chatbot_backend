@@ -22,7 +22,7 @@ class SendMessageRequest(BaseModel):
     provider_id: uuid.UUID 
     model_id: uuid.UUID 
     thinking_enabled: bool = Field(default=False, description="Enable reasoning/thinking tokens for models that support it")
-    
+    file_id: uuid.UUID | None = Field(default=None, description="Optional ID of the document to use for RAG search")
 
 
 # --- responses --------------------------------------------------------------
@@ -52,3 +52,4 @@ class SendMessageResponse(BaseModel):
     conversation_id: uuid.UUID
     user_message: MessageResponse
     assistant_message: MessageResponse
+    reasoning: str | None = None

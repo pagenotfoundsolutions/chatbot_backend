@@ -1,12 +1,8 @@
 from fastapi import Depends
-from sqlalchemy.orm import Session
 
-from app.shared.database.session import get_db
 
 from app.modules.ai_providers.application.ports.output.provider_repository_port import ProviderRepositoryPort
 from app.modules.ai_providers.application.ports.output.model_repository_port import ModelRepositoryPort
-from app.modules.ai_providers.adapters.output.persistence.sqlalchemy_provider_repository import SqlAlchemyProviderRepository
-from app.modules.ai_providers.adapters.output.persistence.sqlalchemy_model_repository import SqlAlchemyModelRepository
 
 from app.modules.ai_providers.application.ports.input.create_provider_use_case import CreateProviderUseCase
 from app.modules.ai_providers.application.commands.create_provider_handler import CreateProviderHandler

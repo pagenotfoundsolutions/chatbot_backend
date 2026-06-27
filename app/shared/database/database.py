@@ -1,7 +1,6 @@
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, Session, with_loader_criteria, ORMExecuteState
 from sqlalchemy.orm import declarative_base
-from typing import Any
 
 from app.shared.config.settings import settings
 

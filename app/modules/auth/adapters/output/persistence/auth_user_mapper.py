@@ -1,4 +1,3 @@
-from uuid import UUID
 from app.modules.auth.domain.entities.auth_user import AuthUser
 from app.modules.auth.domain.value_objects.email import Email
 from app.modules.auth.adapters.output.persistence.models.auth_user_model import AuthUserModel

@@ -5,58 +5,48 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    # --- Database & ORM ---
     "alembic>=1.18.4",
-    "beautifulsoup4>=4.15.0",
-    "ddgs>=9.14.4",
-    "docx2txt>=0.9",
-    "duckduckgo-search>=6.0.0",
-    "fastapi>=0.136.3",
-    "flashrank>=0.2.8",
-    "jq>=1.11.0",
-    "langchain>=1.3.7",
-    "langchain-anthropic>=1.4.6",
-    "langchain-community>=0.4.2",
-    "langchain-huggingface>=1.2.2",
-    "langchain-nvidia-ai-endpoints>=1.4.1",
-    "langchain-ollama>=1.1.0",
-    "langchain-openai>=1.3.2",
-    "langchain-postgres>=0.0.17",
-    "langchain-text-splitters>=1.1.2",
-    "langgraph>=0.2.0",
-    "lxml>=6.1.1",
-    "mcp>=1.28.1",
-    "numexpr>=2.10.0",
-    "numpy>=2.4.6",
-    "openpyxl>=3.1.5",
-    "pandas>=3.0.3",
-    "passlib[bcrypt]>=1.7.4",
-    "pgvector>=0.3.6",
-    "pillow>=12.2.0",
+    "sqlalchemy>=2.0.50",
     "psycopg[binary]>=3.3.4",
+    "pgvector>=0.3.6",
+    # --- Web Framework & API ---
+    "fastapi>=0.136.3",
+    "uvicorn>=0.49.0",
+    "python-multipart>=0.0.32",
     "pydantic-settings>=2.14.1",
     "pydantic[email]>=2.13.4",
-    "pyjwt>=2.13.0",
-    "pypdf>=6.12.2",
-    "pytesseract>=0.3.13",
-    "python-multipart>=0.0.32",
-    "sentence-transformers>=3.0.0",
-    "sqlalchemy>=2.0.50",
-    "uvicorn>=0.49.0",
-    "wikipedia>=1.4.0",
+    # --- LangChain Ecosystem (Modular & Lightweight) ---
+    "langchain-core>=0.3.0",
+    "langchain>=1.3.7",
+    "langchain-community>=0.4.2",
+    "langchain-text-splitters>=1.1.2",
+    "langgraph>=0.2.0",
+
+    # --- AI Models / Providers ---
+    "langchain-openai>=1.3.2",
+    "langchain-nvidia-ai-endpoints",
+    "langchain-anthropic",
+    "langchain-google-genai",
+    "langchain-huggingface>=1.2.2",
+
+    # --- RAG Search Tools ---
+    "flashrank>=0.2.8", # Reranking models for better search
+    "duckduckgo-search", # Web search capability
+    "ddgs", # Required by latest langchain for DuckDuckGo
+    "wikipedia>=1.4.0", # Wikipedia search capability
+    # --- Data Processing & Document Parsers ---
+    "pandas>=3.0.3",
+    "openpyxl>=3.1.5", # Excel parser
+    "docx2txt>=0.9", # Word document parser
+    "pypdf>=6.12.2", # PDF parser
+    "beautifulsoup4>=4.15.0", # HTML parser
+    "pytesseract>=0.3.13", # OCR for images
+    "pillow>=12.2.0", # Image processing
+    # --- Security & Math Utilities ---
+    "bcrypt>=5.0.0", # Password hashing
+    "pyjwt>=2.13.0", # JWT Authentication
+    "numexpr>=2.10.0", # Safe math evaluation
 ]
 
-[project.optional-dependencies]
-# Install only the provider(s) you use, e.g. `uv sync --extra anthropic`.
-# `echo` (the default LLM_PROVIDER) needs none of these.
-anthropic = ["langchain-anthropic>=0.3.0"]
-openai = ["langchain-openai>=0.2.0"]
-ollama = ["langchain-ollama>=0.2.0"]
 
-[tool.uv.sources]
-torch = { index = "pytorch-cpu" }
-torchvision = { index = "pytorch-cpu" }
-
-[[tool.uv.index]]
-name = "pytorch-cpu"
-url = "https://download.pytorch.org/whl/cpu"
-explicit = true

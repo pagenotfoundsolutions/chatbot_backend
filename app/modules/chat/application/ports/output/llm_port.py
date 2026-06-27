@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import uuid
 from abc import ABC, abstractmethod
 from collections.abc import Iterator, Sequence
 
@@ -18,16 +17,16 @@ class LLMPort(ABC):
     """
 
     @abstractmethod
-    def generate(self, history: Sequence[Message], config: ProviderConfigDTO, thinking_enabled: bool = False) -> str:
+    def generate(self, history: Sequence[Message], config: ProviderConfigDTO, thinking_enabled: bool = False, context: dict | None = None) -> str:
         """Generate a single complete response from the LLM based on the conversation history."""
         pass
 
     @abstractmethod
-    def stream(self, history: Sequence[Message], config: ProviderConfigDTO, thinking_enabled: bool = False) -> Iterator[tuple[str, str]]:
+    def stream(self, history: Sequence[Message], config: ProviderConfigDTO, thinking_enabled: bool = False, context: dict | None = None) -> Iterator[tuple[str, str]]:
         """Yield the assistant reply as incremental text chunks (type, content).
         Type can be 'content' or 'thinking'.
 
         Default implementation falls back to a single chunk from `generate()`,
         so an adapter only overrides this when it supports true token streaming.
         """
-        yield "content", self.generate(history, config, thinking_enabled)
+        yield "content", self.generate(history, config, thinking_enabled, context)

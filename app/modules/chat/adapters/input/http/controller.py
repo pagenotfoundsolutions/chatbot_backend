@@ -158,7 +158,8 @@ class ChatController:
                 content=request.content,
                 provider_id=request.provider_id,
                 model_id=request.model_id,
-                thinking_enabled=request.thinking_enabled
+                thinking_enabled=request.thinking_enabled,
+                file_id=request.file_id
             )
         )
         return ChatViewMapper.send_result(result)
@@ -177,7 +178,8 @@ class ChatController:
             content=request.content,
             provider_id=request.provider_id,
             model_id=request.model_id,
-            thinking_enabled=request.thinking_enabled
+            thinking_enabled=request.thinking_enabled,
+            file_id=request.file_id
         )
         
         # Eagerly call execute_stream to catch any validation errors synchronously

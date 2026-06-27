@@ -1,4 +1,3 @@
-from typing import Optional
 from app.modules.ai_providers.domain.entities.ai_provider import AIProvider
 from app.modules.ai_providers.domain.entities.ai_model import AIModel
 from app.modules.ai_providers.adapters.output.persistence.models.ai_provider_model import AIProviderModel

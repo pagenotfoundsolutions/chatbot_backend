@@ -1,7 +1,7 @@
 from typing import Sequence, Optional
 import uuid
 
-from sqlalchemy import select, delete, func, text
+from sqlalchemy import select, delete, func
 from sqlalchemy.orm import Session
 
 from app.modules.rag.application.ports.output.vector_store_port import VectorStorePort

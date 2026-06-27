@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 from app.modules.chat.domain.exceptions.chat_exceptions import EmptyMessageContent
 from app.modules.chat.domain.value_objects.message_role import MessageRole

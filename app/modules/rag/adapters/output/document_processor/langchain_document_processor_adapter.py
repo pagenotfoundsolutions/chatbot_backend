@@ -96,7 +96,7 @@ class LangchainDocumentProcessorAdapter(DocumentProcessorPort):
             loader = TextLoader(file_path)
             try:
                 docs = loader.load()
-            except Exception as e:
+            except Exception:
                 # If utf-8 fails, try with autodetect or latin-1
                 loader = TextLoader(file_path, encoding="latin-1")
                 docs = loader.load()

@@ -1,4 +1,3 @@
-from uuid import UUID
 from app.modules.profile.domain.entities.profile import Profile
 from app.modules.profile.adapters.output.persistence.models.profile_model import ProfileModel
 

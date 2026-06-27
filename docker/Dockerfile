@@ -19,9 +19,11 @@ COPY pyproject.toml uv.lock ./
 
 # Set the virtual environment path outside of /app
 ENV UV_PROJECT_ENVIRONMENT="/opt/venv"
-
-# Install dependencies into the virtual environment
-RUN uv sync --frozen --no-cache
+# # Install dependencies into the virtual environment
+# RUN uv sync --frozen --no-cache
+# Install dependencies into the virtual environment (with cache mount for speed)
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen
 
 # Copy the application code
 COPY . .

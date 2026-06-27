@@ -16,7 +16,7 @@ class SqlAlchemyFileRepository(FileRepositoryPort):
     def save(self, file: File) -> None:
         db_file = FileMapper.to_persistence(file)
         self._session.merge(db_file)
-        self._session.flush()
+        self._session.commit()
 
     def get(self, id: uuid.UUID) -> Optional[File]:
         db_file = self._session.get(FileModel, id)

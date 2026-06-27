@@ -1,8 +1,5 @@
-from sqlalchemy import Column, String, Boolean, DateTime, Float, Integer, ForeignKey, JSON
-from sqlalchemy.dialects.postgresql import UUID as PGUUID
+from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
-import uuid
-from datetime import datetime
 
 from app.shared.database.database import Base
 from app.shared.database.core_model import CoreModelMixin

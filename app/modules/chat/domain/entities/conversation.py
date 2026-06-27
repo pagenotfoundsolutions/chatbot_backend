@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 from app.modules.chat.domain.entities.message import Message
 from app.modules.chat.domain.events.message_posted import MessagePosted

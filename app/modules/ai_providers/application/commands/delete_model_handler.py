@@ -1,4 +1,3 @@
-import uuid
 
 from app.modules.ai_providers.application.ports.output.model_repository_port import ModelRepositoryPort
 from app.modules.ai_providers.application.ports.input.delete_model_use_case import DeleteModelUseCase, DeleteModelCommand

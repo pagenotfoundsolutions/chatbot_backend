@@ -1,4 +1,3 @@
-from typing import Optional
 from app.modules.profile.application.queries.get_profile.get_profile_query import GetProfileQuery
 from app.modules.profile.application.ports.output.profile_repository_port import ProfileRepositoryPort
 from app.modules.profile.domain.entities.profile import Profile

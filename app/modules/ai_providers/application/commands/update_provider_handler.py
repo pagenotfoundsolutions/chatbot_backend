@@ -1,4 +1,3 @@
-import uuid
 from typing import Optional
 
 from app.modules.ai_providers.domain.entities.ai_provider import AIProvider

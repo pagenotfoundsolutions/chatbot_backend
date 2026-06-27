@@ -1,4 +1,3 @@
-from typing import List
 from app.modules.ai_providers.application.ports.input.bulk_create_providers_use_case import BulkCreateProvidersUseCase, BulkCreateProvidersCommand
 
 from app.modules.ai_providers.application.ports.input.create_provider_use_case import CreateProviderUseCase, CreateProviderCommand

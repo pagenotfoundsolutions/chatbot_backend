@@ -25,5 +25,10 @@ class RAGRetrievalFailed(AppException):
 
 
 class LLMProviderError(AppException):
-    def __init__(self, reason: str) -> None:
-        super().__init__(f"LLM Provider Error: {reason}", status_code=502)
+    def __init__(self, detail: str) -> None:
+        super().__init__(f"LLM Provider Error: {detail}", status_code=502)
+
+
+class ModelCapabilityError(ValidationException):
+    def __init__(self, capability: str) -> None:
+        super().__init__(f"The selected model does not support this capability: {capability}")

@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-from functools import lru_cache
 
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from app.modules.chat.adapters.output.llm.echo_llm_adapter import EchoLLMAdapter
 from app.modules.chat.adapters.output.persistence.sqlalchemy_conversation_repository import (
     SqlAlchemyConversationRepository,
 )
@@ -75,39 +73,44 @@ def get_provider_config_use_case(db: Session = Depends(get_db)) -> GetProviderCo
     
     return GetProviderConfigHandler(provider_repo, model_repo)
 
+from app.modules.chat.application.ports.output.agent_port import AgentPort
+from app.modules.tools.application.ports.input.get_all_tools_use_case import GetAllToolsUseCase
+from app.modules.tools.adapters.input.http.dependencies import get_all_tools_use_case
+from app.modules.files.adapters.input.http.api.dependencies import get_file_repository
+from app.modules.files.application.ports.output.file_repository_port import FileRepositoryPort
+
 def get_llm() -> LLMPort:
     """Build the dynamic LLM adapter."""
     from app.modules.chat.adapters.output.llm.dynamic_llm_adapter import DynamicLLMAdapter
-    from app.modules.tools.adapters.input.http.dependencies import get_all_tools_use_case
-    return DynamicLLMAdapter(get_all_tools_use_case=get_all_tools_use_case())
+    return DynamicLLMAdapter()
 
+def get_agent_port() -> AgentPort:
+    from app.modules.chat.adapters.output.agent.langgraph_agent_adapter import LangGraphAgentAdapter
+    return LangGraphAgentAdapter()
 
 def get_conversation_repository(
     db: Session = Depends(get_db),
 ) -> ConversationRepositoryPort:
     return SqlAlchemyConversationRepository(db)
 
-
 def get_create_conversation_use_case(
     repository: ConversationRepositoryPort = Depends(get_conversation_repository),
 ) -> CreateConversationUseCase:
     return CreateConversationHandler(repository)
 
-
-from app.modules.rag.application.ports.input.search_chunks_use_case import SearchChunksUseCase
-from app.modules.rag.adapters.input.http.dependencies import get_search_chunks_use_case
-
 def get_send_message_use_case(
     repository: ConversationRepositoryPort = Depends(get_conversation_repository),
-    llm: LLMPort = Depends(get_llm),
+    agent_port: AgentPort = Depends(get_agent_port),
     get_provider_config: GetProviderConfigUseCase = Depends(get_provider_config_use_case),
-    search_chunks: SearchChunksUseCase = Depends(get_search_chunks_use_case)
+    get_all_tools: GetAllToolsUseCase = Depends(get_all_tools_use_case),
+    file_repo: FileRepositoryPort = Depends(get_file_repository)
 ) -> SendMessageUseCase:
     return SendMessageHandler(
         repository=repository, 
-        llm=llm, 
+        agent_port=agent_port, 
         get_provider_config=get_provider_config,
-        search_chunks=search_chunks
+        get_all_tools=get_all_tools,
+        file_repo=file_repo
     )
 
 

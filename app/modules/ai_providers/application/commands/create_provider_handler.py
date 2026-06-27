@@ -1,5 +1,3 @@
-import uuid
-from typing import Optional
 
 from app.modules.ai_providers.domain.entities.ai_provider import AIProvider
 from app.modules.ai_providers.application.ports.output.provider_repository_port import ProviderRepositoryPort

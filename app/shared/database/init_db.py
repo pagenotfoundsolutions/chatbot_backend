@@ -1,4 +1,3 @@
-from app.shared.database.database import Base, engine
 
 # Register tables by importing each FEATURE's models package (its __init__.py
 # imports that feature's model classes). Tables register on Base.metadata BEFORE
@@ -10,7 +9,6 @@ import app.modules.auth.adapters.output.persistence.models  # noqa: F401
 import app.modules.profile.adapters.output.persistence.models  # noqa: F401
 import app.modules.ai_providers.adapters.output.persistence.models  # noqa: F401
 import app.modules.rag.adapters.output.persistence.models  # noqa: F401
-from app.modules.files.adapters.output.persistence.models.file_model import FileModel
 
 
 def init_db() -> None:

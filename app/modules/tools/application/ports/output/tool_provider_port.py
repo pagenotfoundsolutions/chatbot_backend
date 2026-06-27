@@ -4,14 +4,14 @@ import uuid
 
 from langchain_core.tools import BaseTool
 
-class GetAllToolsUseCase(ABC):
-    """Driving port: Fetches all available tools (Native, Manual, and MCP)."""
-
+class ToolProviderPort(ABC):
+    """Output port for fetching tools from infrastructure."""
+    
     @abstractmethod
-    def execute(
+    def get_all_tools(
         self, 
         auth_user_id: uuid.UUID | None = None, 
         file_id: uuid.UUID | None = None
     ) -> Sequence[BaseTool]:
-        """Returns the active list of tools."""
+        """Returns a list of all active tools."""
         pass

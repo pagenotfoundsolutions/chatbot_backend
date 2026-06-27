@@ -48,4 +48,5 @@ class ChatViewMapper:
             conversation_id=result.conversation.id,
             user_message=ChatViewMapper.message(result.user_message),
             assistant_message=ChatViewMapper.message(result.assistant_message),
+            reasoning=result.reasoning,
         )

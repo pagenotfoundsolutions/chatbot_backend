@@ -10,6 +10,34 @@
       },
       "models": [
         {
+          "model_key": "o1",
+          "display_name": "OpenAI o1",
+          "description": "OpenAI's advanced reasoning model.",
+          "model_type": "text",
+          "max_input_tokens": 200000,
+          "max_output_tokens": 100000,
+          "max_context_window": 200000,
+          "supports_vision": true,
+          "supports_tools": true,
+          "supports_json": true,
+          "supports_reasoning": true,
+          "is_active": false
+        },
+        {
+          "model_key": "o3-mini",
+          "display_name": "OpenAI o3-mini",
+          "description": "OpenAI's faster, cost-effective reasoning model.",
+          "model_type": "text",
+          "max_input_tokens": 200000,
+          "max_output_tokens": 100000,
+          "max_context_window": 200000,
+          "supports_vision": false,
+          "supports_tools": true,
+          "supports_json": true,
+          "supports_reasoning": true,
+          "is_active": false
+        },
+        {
           "model_key": "gpt-4o",
           "display_name": "GPT-4o",
           "description": "OpenAI's fastest and most capable model.",
@@ -19,7 +47,9 @@
           "max_context_window": 128000,
           "supports_vision": true,
           "supports_tools": true,
-          "supports_json": true
+          "supports_json": true,
+          "supports_reasoning": false,
+          "is_active": false
         },
         {
           "model_key": "gpt-3.5-turbo",
@@ -31,7 +61,9 @@
           "max_context_window": 16385,
           "supports_vision": false,
           "supports_tools": true,
-          "supports_json": true
+          "supports_json": true,
+          "supports_reasoning": false,
+          "is_active": false
         },
         {
           "model_key": "gpt-4o-mini",
@@ -43,7 +75,9 @@
           "max_context_window": 128000,
           "supports_vision": true,
           "supports_tools": true,
-          "supports_json": true
+          "supports_json": true,
+          "supports_reasoning": false,
+          "is_active": false
         }
       ]
     },
@@ -57,16 +91,46 @@
       },
       "models": [
         {
+          "model_key": "claude-fable-5",
+          "display_name": "Claude Fable 5",
+          "description": "Anthropic's most capable reasoning model.",
+          "model_type": "text",
+          "max_input_tokens": 1000000,
+          "max_output_tokens": 8192,
+          "max_context_window": 1000000,
+          "supports_vision": true,
+          "supports_tools": true,
+          "supports_json": true,
+          "supports_reasoning": true,
+          "is_active": false
+        },
+        {
+          "model_key": "claude-mythos-5",
+          "display_name": "Claude Mythos 5",
+          "description": "Anthropic's specialized advanced reasoning model.",
+          "model_type": "text",
+          "max_input_tokens": 1000000,
+          "max_output_tokens": 8192,
+          "max_context_window": 1000000,
+          "supports_vision": true,
+          "supports_tools": true,
+          "supports_json": true,
+          "supports_reasoning": true,
+          "is_active": false
+        },
+        {
           "model_key": "claude-3-5-sonnet",
           "display_name": "Claude 3.5 Sonnet",
-          "description": "Anthropic's most intelligent model.",
+          "description": "Anthropic's intelligent model.",
           "model_type": "text",
           "max_input_tokens": 200000,
           "max_output_tokens": 8192,
           "max_context_window": 200000,
           "supports_vision": true,
           "supports_tools": true,
-          "supports_json": true
+          "supports_json": true,
+          "supports_reasoning": false,
+          "is_active": false
         },
         {
           "model_key": "claude-3-haiku",
@@ -78,19 +142,23 @@
           "max_context_window": 200000,
           "supports_vision": true,
           "supports_tools": true,
-          "supports_json": true
+          "supports_json": true,
+          "supports_reasoning": false,
+          "is_active": false
         },
         {
           "model_key": "claude-sonnet-4-6",
           "display_name": "Claude Sonnet 4.6",
-          "description": "Anthropic's configured sonnet model.",
+          "description": "Anthropic's configured sonnet model with extended thinking.",
           "model_type": "text",
           "max_input_tokens": 200000,
           "max_output_tokens": 8192,
           "max_context_window": 200000,
           "supports_vision": true,
           "supports_tools": true,
-          "supports_json": true
+          "supports_json": true,
+          "supports_reasoning": true,
+          "is_active": false
         }
       ]
     },
@@ -104,6 +172,34 @@
       },
       "models": [
         {
+          "model_key": "gemini-3.1-pro",
+          "display_name": "Gemini 3.1 Pro",
+          "description": "Google's flagship reasoning model.",
+          "model_type": "text",
+          "max_input_tokens": 2000000,
+          "max_output_tokens": 8192,
+          "max_context_window": 2000000,
+          "supports_vision": true,
+          "supports_tools": true,
+          "supports_json": true,
+          "supports_reasoning": true,
+          "is_active": false
+        },
+        {
+          "model_key": "gemini-3-deep-think",
+          "display_name": "Gemini 3 Deep Think",
+          "description": "Google's specialized model for intensive problem-solving.",
+          "model_type": "text",
+          "max_input_tokens": 2000000,
+          "max_output_tokens": 8192,
+          "max_context_window": 2000000,
+          "supports_vision": true,
+          "supports_tools": true,
+          "supports_json": true,
+          "supports_reasoning": true,
+          "is_active": false
+        },
+        {
           "model_key": "gemini-1.5-pro",
           "display_name": "Gemini 1.5 Pro",
           "description": "Google's most capable model with a massive context window.",
@@ -113,7 +209,9 @@
           "max_context_window": 2000000,
           "supports_vision": true,
           "supports_tools": true,
-          "supports_json": true
+          "supports_json": true,
+          "supports_reasoning": false,
+          "is_active": false
         },
         {
           "model_key": "gemini-1.5-flash",
@@ -125,7 +223,9 @@
           "max_context_window": 1000000,
           "supports_vision": true,
           "supports_tools": true,
-          "supports_json": true
+          "supports_json": true,
+          "supports_reasoning": false,
+          "is_active": false
         }
       ]
     },
@@ -139,6 +239,20 @@
       },
       "models": [
         {
+          "model_key": "deepseek-r1",
+          "display_name": "DeepSeek-R1",
+          "description": "Local DeepSeek reasoning model.",
+          "model_type": "text",
+          "max_input_tokens": 128000,
+          "max_output_tokens": 8192,
+          "max_context_window": 128000,
+          "supports_vision": false,
+          "supports_tools": true,
+          "supports_json": true,
+          "supports_reasoning": true,
+          "is_active": false
+        },
+        {
           "model_key": "llama3.1",
           "display_name": "Llama 3.1",
           "description": "Local Llama 3.1 Model",
@@ -148,7 +262,9 @@
           "max_context_window": 8192,
           "supports_vision": false,
           "supports_tools": true,
-          "supports_json": true
+          "supports_json": true,
+          "supports_reasoning": false,
+          "is_active": false
         }
       ]
     },
@@ -162,6 +278,20 @@
       },
       "models": [
         {
+          "model_key": "deepseek-ai/DeepSeek-R1",
+          "display_name": "DeepSeek-R1",
+          "description": "DeepSeek-R1 reasoning model hosted on Hugging Face.",
+          "model_type": "text",
+          "max_input_tokens": 128000,
+          "max_output_tokens": 8192,
+          "max_context_window": 128000,
+          "supports_vision": false,
+          "supports_tools": true,
+          "supports_json": true,
+          "supports_reasoning": true,
+          "is_active": false
+        },
+        {
           "model_key": "HuggingFaceH4/zephyr-7b-beta",
           "display_name": "Zephyr 7B Beta",
           "description": "Zephyr 7B Beta model by HuggingFaceH4",
@@ -171,7 +301,9 @@
           "max_context_window": 8192,
           "supports_vision": false,
           "supports_tools": false,
-          "supports_json": false
+          "supports_json": false,
+          "supports_reasoning": false,
+          "is_active": false
         }
       ]
     },
@@ -194,7 +326,9 @@
           "max_context_window": 4096,
           "supports_vision": false,
           "supports_tools": false,
-          "supports_json": false
+          "supports_json": false,
+          "supports_reasoning": false,
+          "is_active": true
         },
         {
           "model_key": "meta/llama-3.1-70b-instruct",
@@ -206,7 +340,23 @@
           "max_context_window": 128000,
           "supports_vision": false,
           "supports_tools": true,
-          "supports_json": true
+          "supports_json": true,
+          "supports_reasoning": false,
+          "is_active": true
+        },
+        {
+          "model_key": "minimaxai/minimax-m3",
+          "display_name": "MiniMax M3",
+          "description": "MiniMax M3 model served via NVIDIA.",
+          "model_type": "text",
+          "max_input_tokens": 32768,
+          "max_output_tokens": 4096,
+          "max_context_window": 32768,
+          "supports_vision": false,
+          "supports_tools": true,
+          "supports_json": true,
+          "supports_reasoning": true,
+          "is_active": true
         }
       ]
     }

@@ -1,6 +1,6 @@
 import uuid
 from abc import abstractmethod
-from typing import Optional, List
+from typing import List
 
 from app.shared.kernel.base_repository import BaseRepository
 from app.modules.ai_providers.domain.entities.ai_model import AIModel
