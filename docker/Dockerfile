@@ -28,6 +28,9 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # Copy the application code
 COPY . .
 
+# Ensure all directories under app/ have an __init__.py to prevent ModuleNotFoundError
+RUN find app -type d -exec touch {}/__init__.py \;
+
 # Ensure the virtual environment's binaries are in the PATH
 ENV PATH="/opt/venv/bin:$PATH"
 
