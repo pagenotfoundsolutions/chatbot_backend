@@ -108,8 +108,9 @@ pipeline {
         stage('Deploy') {
             when {
                 anyOf {
-                    branch 'dev'
-                    branch 'develop'
+                    // branch 'dev'
+                    // branch 'develop'
+                     branch 'release'
                     branch 'release/*'
                     branch 'hotfix/*'
                 }
