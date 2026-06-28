@@ -82,3 +82,6 @@ storage/sqlite/*
 
 storage/vectors/*
 !storage/vectors/.gitkeep
+
+env/.env*
+!env/.env.example

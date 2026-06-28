@@ -119,35 +119,50 @@ pipeline {
                 script {
                     def composeFile = ''
                     def envFile = ''
+                    def envCredentialId = ''
                     def isProd = false
                     
                     // Determine compose file and environment based on branch
                     if (env.BRANCH_NAME == 'dev' || env.BRANCH_NAME == 'develop') {
                         composeFile = 'docker/docker-compose.dev.yml'
                         envFile = 'env/.env.dev'
+                        envCredentialId = 'chatbot-env-dev'
                     } else {
                         composeFile = 'docker/docker-compose.prod.yml'
                         envFile = 'env/.env.prod'
+                        envCredentialId = 'chatbot-env-prod'
                         isProd = true
                     }
                     
                     echo "📦 Deploying with: ${composeFile} and env file: ${envFile}"
                     
-                    // Ensure environment files exist, otherwise use examples
-                    if (isUnix()) {
-                        sh """
-                        if [ ! -f "${envFile}" ]; then
-                            echo "⚠️ ${envFile} not found! Using example file..."
-                            cp "env/.env.example" "${envFile}"
-                        fi
-                        """
-                    } else {
-                        bat """
-                        if not exist "${envFile}" (
-                            echo ⚠️ ${envFile} not found! Using example file...
-                            copy "env\\.env.example" "${envFile}"
-                        )
-                        """
+                    // --- OLD CODE (Commented out) ---
+                    // // Ensure environment files exist, otherwise use examples
+                    // if (isUnix()) {
+                    //     sh """
+                    //     if [ ! -f "${envFile}" ]; then
+                    //         echo "⚠️ ${envFile} not found! Using example file..."
+                    //         cp "env/.env.example" "${envFile}"
+                    //     fi
+                    //     """
+                    // } else {
+                    //     bat """
+                    //     if not exist "${envFile}" (
+                    //         echo ⚠️ ${envFile} not found! Using example file...
+                    //         copy "env\\.env.example" "${envFile}"
+                    //     )
+                    //     """
+                    // }
+                    // --- END OLD CODE ---
+
+                    // Load Environment Variables Securely from Jenkins
+                    echo "🔒 Loading environment file for branch '${env.BRANCH_NAME}' using credential ID '${envCredentialId}'..."
+                    withCredentials([file(credentialsId: envCredentialId, variable: 'SECRET_ENV')]) {
+                        if (isUnix()) {
+                            sh "cp \$SECRET_ENV ${envFile}"
+                        } else {
+                            bat "copy \"%SECRET_ENV%\" \"${envFile}\""
+                        }
                     }
                     
                     // Stop existing containers
