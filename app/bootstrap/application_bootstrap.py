@@ -34,6 +34,9 @@ def create_app() -> FastAPI:
         title=settings.project_name,
         description=settings.description,
         version=settings.version,
+        openapi_url="/api/openapi.json",
+        docs_url="/api/docs",
+        redoc_url="/api/redoc",
     )
 
     app.add_middleware(
