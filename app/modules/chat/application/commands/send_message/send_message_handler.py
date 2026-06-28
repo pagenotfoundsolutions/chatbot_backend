@@ -92,7 +92,7 @@ class SendMessageHandler(SendMessageUseCase):
         content = self._clean(command.content)
         conversation, _, config, tools, system_prompt = self._prepare_execution(command, content)
         
-        if not config.supports_stream:
+        if not config.supports("stream"):
             raise ModelCapabilityError("streaming")
 
         def _stream() -> Iterator[tuple[str, str]]:
@@ -138,7 +138,7 @@ class SendMessageHandler(SendMessageUseCase):
         user_message = conversation.post_user_message(content)
         
         tools = list(self._get_all_tools.execute(command.auth_user_id, command.file_id)) if self._get_all_tools else []
-        if not config.supports_tools:
+        if not config.supports("tools"):
             tools = []
             
         self._validate_capabilities(command, config, tools)
@@ -178,7 +178,7 @@ class SendMessageHandler(SendMessageUseCase):
 
     def _validate_capabilities(self, command: SendMessageCommand, config: ProviderConfigDTO, tools: list[Any]) -> None:
         """Validates that the selected model supports the requested features."""
-        if command.thinking_enabled and not config.supports_reasoning:
+        if command.thinking_enabled and not config.supports("reasoning"):
             raise ModelCapabilityError("reasoning/thinking")
             
         # We don't raise an error for tools. If a model doesn't support tools, 

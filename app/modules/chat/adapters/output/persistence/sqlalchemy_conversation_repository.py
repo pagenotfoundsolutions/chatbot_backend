@@ -68,7 +68,7 @@ class SqlAlchemyConversationRepository(ConversationRepositoryPort):
         
         stmt = select(ConversationModel).where(
             ConversationModel.auth_user_id == auth_user_id
-        ).order_by(ConversationModel.created_at.desc()).offset((page - 1) * size).limit(size)
+        ).order_by(ConversationModel.updated_at.desc()).offset((page - 1) * size).limit(size)
         
         stmt = stmt.options(noload(ConversationModel.messages))
         models = self._session.execute(stmt).scalars().all()

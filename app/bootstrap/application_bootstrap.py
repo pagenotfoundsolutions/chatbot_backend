@@ -56,6 +56,6 @@ def create_app() -> FastAPI:
     # Catch any unhandled 500 internal server errors so they return JSON, not plain text
     app.add_exception_handler(Exception, general_exception_handler)
 
-    app.include_router(build_api_router())
+    app.include_router(build_api_router(), prefix="/api")
 
     return app

@@ -47,6 +47,7 @@ from app.modules.chat.application.ports.input.update_conversation_use_case impor
 from app.modules.chat.application.ports.input.send_message_use_case import (
     SendMessageUseCase,
 )
+from app.modules.chat.application.services.cancellation_registry import StreamCancellationRegistry
 from app.shared.resp import SuccessResp
 
 # Inbound (driving) REST adapter. Thin: HTTP <-> use-case translation only.
@@ -163,4 +164,17 @@ def stream_message(
     return StreamingResponse(
         ChatController.stream_message(auth_user_id, conversation_id, request, use_case),
         media_type="text/event-stream",
+    )
+
+
+@router.post("/{conversation_id}/messages/cancel")
+def cancel_message(
+    conversation_id: uuid.UUID,
+    auth_user_id: UUID = Depends(get_current_user_id),
+) -> SuccessResp[str]:
+    """Request cancellation for an active message stream."""
+    StreamCancellationRegistry.request_cancellation(conversation_id)
+    return SuccessResp(
+        message="Message generation cancellation requested",
+        data="Cancelled"
     )

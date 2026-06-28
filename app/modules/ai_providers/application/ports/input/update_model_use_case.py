@@ -1,5 +1,6 @@
 import uuid
 from typing import Optional, Dict, Any
+from app.modules.ai_providers.domain.value_objects.model_capability import ModelCapability
 from abc import ABC, abstractmethod
 from app.modules.ai_providers.domain.entities.ai_model import AIModel
 
@@ -23,27 +24,7 @@ class UpdateModelCommand:
         default_frequency_penalty: Optional[float] = None,
         default_presence_penalty: Optional[float] = None,
         
-        supports_tools: Optional[bool] = None,
-        supports_parallel_tools: Optional[bool] = None,
-        supports_structured_output: Optional[bool] = None,
-        supports_json: Optional[bool] = None,
-        supports_stream: Optional[bool] = None,
-        supports_vision: Optional[bool] = None,
-        supports_image_generation: Optional[bool] = None,
-        supports_audio_input: Optional[bool] = None,
-        supports_audio_output: Optional[bool] = None,
-        supports_embeddings: Optional[bool] = None,
-        supports_reasoning: Optional[bool] = None,
-        supports_system_prompt: Optional[bool] = None,
-        supports_web_search: Optional[bool] = None,
-        supports_file_upload: Optional[bool] = None,
-        supports_pdf: Optional[bool] = None,
-        supports_function_call: Optional[bool] = None,
-        supports_seed: Optional[bool] = None,
-        supports_response_format: Optional[bool] = None,
-        supports_cache: Optional[bool] = None,
-        supports_citations: Optional[bool] = None,
-        supports_multimodal: Optional[bool] = None,
+        capabilities: Optional[list[ModelCapability]] = None,
         
         typical_latency_ms: Optional[int] = None,
         speed_tier: Optional[str] = None,
@@ -76,27 +57,7 @@ class UpdateModelCommand:
         self.default_frequency_penalty = default_frequency_penalty
         self.default_presence_penalty = default_presence_penalty
         
-        self.supports_tools = supports_tools
-        self.supports_parallel_tools = supports_parallel_tools
-        self.supports_structured_output = supports_structured_output
-        self.supports_json = supports_json
-        self.supports_stream = supports_stream
-        self.supports_vision = supports_vision
-        self.supports_image_generation = supports_image_generation
-        self.supports_audio_input = supports_audio_input
-        self.supports_audio_output = supports_audio_output
-        self.supports_embeddings = supports_embeddings
-        self.supports_reasoning = supports_reasoning
-        self.supports_system_prompt = supports_system_prompt
-        self.supports_web_search = supports_web_search
-        self.supports_file_upload = supports_file_upload
-        self.supports_pdf = supports_pdf
-        self.supports_function_call = supports_function_call
-        self.supports_seed = supports_seed
-        self.supports_response_format = supports_response_format
-        self.supports_cache = supports_cache
-        self.supports_citations = supports_citations
-        self.supports_multimodal = supports_multimodal
+        self.capabilities = capabilities
         
         self.typical_latency_ms = typical_latency_ms
         self.speed_tier = speed_tier

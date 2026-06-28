@@ -4,6 +4,7 @@ from typing import Optional, Any
 from datetime import datetime
 
 from app.shared.kernel.aggregate_root import AggregateRoot
+from app.modules.ai_providers.domain.value_objects.model_capability import ModelCapability
 
 @dataclass(kw_only=True)
 class AIModel(AggregateRoot[uuid.UUID]):
@@ -30,28 +31,8 @@ class AIModel(AggregateRoot[uuid.UUID]):
     default_frequency_penalty: float = 0.0
     default_presence_penalty: float = 0.0
     
-    # Capabilities (Supports)
-    supports_tools: bool = False
-    supports_parallel_tools: bool = False
-    supports_structured_output: bool = False
-    supports_json: bool = False
-    supports_stream: bool = True
-    supports_vision: bool = False
-    supports_image_generation: bool = False
-    supports_audio_input: bool = False
-    supports_audio_output: bool = False
-    supports_embeddings: bool = False
-    supports_reasoning: bool = False
-    supports_system_prompt: bool = True
-    supports_web_search: bool = False
-    supports_file_upload: bool = False
-    supports_pdf: bool = False
-    supports_function_call: bool = False
-    supports_seed: bool = False
-    supports_response_format: bool = False
-    supports_cache: bool = False
-    supports_citations: bool = False
-    supports_multimodal: bool = False
+    # Capabilities
+    capabilities: list[ModelCapability] = field(default_factory=list)
     
     # Pricing & Performance
     typical_latency_ms: int = 1000

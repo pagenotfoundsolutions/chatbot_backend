@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from app.modules.ai_providers.domain.value_objects.model_capability import ModelCapability
 
 @dataclass(frozen=True)
 class ProviderConfigDTO:
@@ -15,23 +16,13 @@ class ProviderConfigDTO:
     presence_penalty: float
     
     # Capabilities
-    supports_reasoning: bool
-    supports_tools: bool
-    supports_parallel_tools: bool
-    supports_structured_output: bool
-    supports_json: bool
-    supports_stream: bool
-    supports_vision: bool
-    supports_image_generation: bool
-    supports_audio_input: bool
-    supports_audio_output: bool
-    supports_embeddings: bool
-    supports_system_prompt: bool
-    supports_web_search: bool
-    supports_file_upload: bool
-    supports_pdf: bool
-    supports_function_call: bool
-    supports_seed: bool
-    supports_response_format: bool
-    supports_cache: bool
-    supports_citations: bool
+    capabilities: list[ModelCapability]
+    
+    def supports(self, capability: ModelCapability | str) -> bool:
+        """Check if a specific capability is supported."""
+        if isinstance(capability, str):
+            try:
+                capability = ModelCapability(capability)
+            except ValueError:
+                return False
+        return capability in self.capabilities

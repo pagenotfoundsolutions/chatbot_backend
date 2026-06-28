@@ -1,7 +1,8 @@
 import uuid
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from abc import ABC, abstractmethod
 from app.modules.ai_providers.domain.entities.ai_model import AIModel
+from app.modules.ai_providers.domain.value_objects.model_capability import ModelCapability
 
 class CreateModelCommand:
     def __init__(
@@ -24,27 +25,7 @@ class CreateModelCommand:
         default_frequency_penalty: float = 0.0,
         default_presence_penalty: float = 0.0,
         
-        supports_tools: bool = False,
-        supports_parallel_tools: bool = False,
-        supports_structured_output: bool = False,
-        supports_json: bool = False,
-        supports_stream: bool = True,
-        supports_vision: bool = False,
-        supports_image_generation: bool = False,
-        supports_audio_input: bool = False,
-        supports_audio_output: bool = False,
-        supports_embeddings: bool = False,
-        supports_reasoning: bool = False,
-        supports_system_prompt: bool = True,
-        supports_web_search: bool = False,
-        supports_file_upload: bool = False,
-        supports_pdf: bool = False,
-        supports_function_call: bool = False,
-        supports_seed: bool = False,
-        supports_response_format: bool = False,
-        supports_cache: bool = False,
-        supports_citations: bool = False,
-        supports_multimodal: bool = False,
+        capabilities: Optional[List[ModelCapability]] = None,
         
         typical_latency_ms: int = 1000,
         speed_tier: str = "standard",
@@ -78,27 +59,7 @@ class CreateModelCommand:
         self.default_frequency_penalty = default_frequency_penalty
         self.default_presence_penalty = default_presence_penalty
         
-        self.supports_tools = supports_tools
-        self.supports_parallel_tools = supports_parallel_tools
-        self.supports_structured_output = supports_structured_output
-        self.supports_json = supports_json
-        self.supports_stream = supports_stream
-        self.supports_vision = supports_vision
-        self.supports_image_generation = supports_image_generation
-        self.supports_audio_input = supports_audio_input
-        self.supports_audio_output = supports_audio_output
-        self.supports_embeddings = supports_embeddings
-        self.supports_reasoning = supports_reasoning
-        self.supports_system_prompt = supports_system_prompt
-        self.supports_web_search = supports_web_search
-        self.supports_file_upload = supports_file_upload
-        self.supports_pdf = supports_pdf
-        self.supports_function_call = supports_function_call
-        self.supports_seed = supports_seed
-        self.supports_response_format = supports_response_format
-        self.supports_cache = supports_cache
-        self.supports_citations = supports_citations
-        self.supports_multimodal = supports_multimodal
+        self.capabilities = [ModelCapability(c) if isinstance(c, str) else c for c in capabilities] if capabilities is not None else []
         
         self.typical_latency_ms = typical_latency_ms
         self.speed_tier = speed_tier

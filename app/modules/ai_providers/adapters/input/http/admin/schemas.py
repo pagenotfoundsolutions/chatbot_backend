@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 import uuid
+from app.modules.ai_providers.domain.value_objects.model_capability import ModelCapability
 
 # --- Provider Schemas ---
 
@@ -39,27 +40,7 @@ class CreateModelRequest(BaseModel):
     default_frequency_penalty: float = 0.0
     default_presence_penalty: float = 0.0
     
-    supports_tools: bool = False
-    supports_parallel_tools: bool = False
-    supports_structured_output: bool = False
-    supports_json: bool = False
-    supports_stream: bool = True
-    supports_vision: bool = False
-    supports_image_generation: bool = False
-    supports_audio_input: bool = False
-    supports_audio_output: bool = False
-    supports_embeddings: bool = False
-    supports_reasoning: bool = False
-    supports_system_prompt: bool = True
-    supports_web_search: bool = False
-    supports_file_upload: bool = False
-    supports_pdf: bool = False
-    supports_function_call: bool = False
-    supports_seed: bool = False
-    supports_response_format: bool = False
-    supports_cache: bool = False
-    supports_citations: bool = False
-    supports_multimodal: bool = False
+    capabilities: Optional[List[ModelCapability]] = Field(default_factory=list)
     
     typical_latency_ms: int = 1000
     speed_tier: str = "standard"
@@ -92,27 +73,7 @@ class UpdateModelRequest(BaseModel):
     default_frequency_penalty: Optional[float] = None
     default_presence_penalty: Optional[float] = None
     
-    supports_tools: Optional[bool] = None
-    supports_parallel_tools: Optional[bool] = None
-    supports_structured_output: Optional[bool] = None
-    supports_json: Optional[bool] = None
-    supports_stream: Optional[bool] = None
-    supports_vision: Optional[bool] = None
-    supports_image_generation: Optional[bool] = None
-    supports_audio_input: Optional[bool] = None
-    supports_audio_output: Optional[bool] = None
-    supports_embeddings: Optional[bool] = None
-    supports_reasoning: Optional[bool] = None
-    supports_system_prompt: Optional[bool] = None
-    supports_web_search: Optional[bool] = None
-    supports_file_upload: Optional[bool] = None
-    supports_pdf: Optional[bool] = None
-    supports_function_call: Optional[bool] = None
-    supports_seed: Optional[bool] = None
-    supports_response_format: Optional[bool] = None
-    supports_cache: Optional[bool] = None
-    supports_citations: Optional[bool] = None
-    supports_multimodal: Optional[bool] = None
+    capabilities: Optional[List[ModelCapability]] = None
     
     typical_latency_ms: Optional[int] = None
     speed_tier: Optional[str] = None

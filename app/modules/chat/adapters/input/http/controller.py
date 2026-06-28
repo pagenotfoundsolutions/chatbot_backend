@@ -196,7 +196,7 @@ class ChatController:
                     yield _sse(event_name, {"content": chunk_content})
                 yield _sse("done", {"conversation_id": str(conversation_id)})
             except AppException as e:
-                yield _sse("error", {"detail": e.detail})
+                yield _sse("error", {"detail": getattr(e, "message", str(e))})
             except Exception as e:
                 yield _sse("error", {"detail": str(e)})
             
