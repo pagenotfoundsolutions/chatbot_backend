@@ -99,29 +99,30 @@ class SendMessageHandler(SendMessageUseCase):
             StreamCancellationRegistry.clear(command.conversation_id)
             chunks: list[str] = []
             reasoning_chunks: list[str] = []
-            for chunk_type, chunk_content in self._agent_port.stream_graph(
-                history=conversation.messages,
-                config=config,
-                thinking_enabled=command.thinking_enabled,
-                system_prompt=system_prompt,
-                tools=tools
-            ):
-                if StreamCancellationRegistry.is_cancelled(command.conversation_id):
-                    logger.info(f"Stream cancelled for conversation {command.conversation_id}")
-                    break
-                    
-                if not chunk_content:
-                    continue
-                if chunk_type == "content":
-                    chunks.append(chunk_content)
-                elif chunk_type == "thinking":
-                    reasoning_chunks.append(chunk_content)
-                yield chunk_type, chunk_content
-
-            StreamCancellationRegistry.clear(command.conversation_id)
-            reply = "".join(chunks).strip() or _EMPTY_REPLY_FALLBACK
-            conversation.post_assistant_message(reply)
-            self._repository.save(conversation)
+            try:
+                for chunk_type, chunk_content in self._agent_port.stream_graph(
+                    history=conversation.messages,
+                    config=config,
+                    thinking_enabled=command.thinking_enabled,
+                    system_prompt=system_prompt,
+                    tools=tools
+                ):
+                    if StreamCancellationRegistry.is_cancelled(command.conversation_id):
+                        logger.info(f"Stream cancelled for conversation {command.conversation_id}")
+                        break
+                        
+                    if not chunk_content:
+                        continue
+                    if chunk_type == "content":
+                        chunks.append(chunk_content)
+                    elif chunk_type == "thinking":
+                        reasoning_chunks.append(chunk_content)
+                    yield chunk_type, chunk_content
+            finally:
+                StreamCancellationRegistry.clear(command.conversation_id)
+                reply = "".join(chunks).strip() or _EMPTY_REPLY_FALLBACK
+                conversation.post_assistant_message(reply)
+                self._repository.save(conversation)
             
         return _stream()
 
