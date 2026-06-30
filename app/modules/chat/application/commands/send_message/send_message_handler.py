@@ -66,7 +66,7 @@ class SendMessageHandler(SendMessageUseCase):
         content = self._clean(command.content)
         conversation, user_message, config, tools, system_prompt = self._prepare_execution(command, content)
 
-        reply, reasoning = self._agent_port.run_graph(
+        reply, thinking_content = self._agent_port.run_graph(
             history=conversation.messages,
             config=config,
             thinking_enabled=command.thinking_enabled,
@@ -77,7 +77,8 @@ class SendMessageHandler(SendMessageUseCase):
             reply = ""
         
         assistant_message = conversation.post_assistant_message(
-            reply.strip() or _EMPTY_REPLY_FALLBACK
+            reply.strip() or _EMPTY_REPLY_FALLBACK,
+            thinking_content=thinking_content
         )
         self._repository.save(conversation)
 
@@ -85,7 +86,7 @@ class SendMessageHandler(SendMessageUseCase):
             conversation=ConversationDTO.from_entity(conversation),
             user_message=MessageDTO.from_entity(user_message),
             assistant_message=MessageDTO.from_entity(assistant_message),
-            reasoning=reasoning,
+            thinking_content=thinking_content,
         )
 
     def execute_stream(self, command: SendMessageCommand) -> Iterator[tuple[str, str]]:
@@ -121,7 +122,8 @@ class SendMessageHandler(SendMessageUseCase):
             finally:
                 StreamCancellationRegistry.clear(command.conversation_id)
                 reply = "".join(chunks).strip() or _EMPTY_REPLY_FALLBACK
-                conversation.post_assistant_message(reply)
+                reasoning = "".join(reasoning_chunks).strip() or None
+                conversation.post_assistant_message(reply, thinking_content=reasoning)
                 self._repository.save(conversation)
             
         return _stream()

@@ -30,6 +30,7 @@ class MessageResponse(BaseModel):
     id: uuid.UUID
     role: MessageRole
     content: str
+    thinking_content: str | None = None
     created_at: datetime
 
 
@@ -52,4 +53,3 @@ class SendMessageResponse(BaseModel):
     conversation_id: uuid.UUID
     user_message: MessageResponse
     assistant_message: MessageResponse
-    reasoning: str | None = None

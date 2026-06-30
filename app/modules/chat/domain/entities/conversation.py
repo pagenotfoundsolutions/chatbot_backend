@@ -80,15 +80,15 @@ class Conversation(AggregateRoot[uuid.UUID]):
     def post_user_message(self, content: str) -> Message:
         return self._append(MessageRole.USER, content)
 
-    def post_assistant_message(self, content: str) -> Message:
-        return self._append(MessageRole.ASSISTANT, content)
+    def post_assistant_message(self, content: str, thinking_content: str | None = None) -> Message:
+        return self._append(MessageRole.ASSISTANT, content, thinking_content=thinking_content)
 
     def post_system_message(self, content: str) -> Message:
         return self._append(MessageRole.SYSTEM, content)
 
     # --- internals ---------------------------------------------------------
-    def _append(self, role: MessageRole, content: str) -> Message:
-        new_msg = Message.create(role=role, content=content)
+    def _append(self, role: MessageRole, content: str, thinking_content: str | None = None) -> Message:
+        new_msg = Message.create(role=role, content=content, thinking_content=thinking_content)
         self._messages.append(new_msg)
         self._touch()
         self.record(

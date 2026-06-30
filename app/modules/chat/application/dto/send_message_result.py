@@ -14,4 +14,3 @@ class SendMessageResult:
     conversation: ConversationDTO
     user_message: MessageDTO
     assistant_message: MessageDTO
-    reasoning: str | None = None
