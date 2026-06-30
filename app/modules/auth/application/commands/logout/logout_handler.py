@@ -8,7 +8,7 @@ class LogoutHandler(LogoutUseCase):
         self.refresh_token_repo = refresh_token_repo
 
     def execute(self, command: LogoutCommand) -> None:
-        token = self.refresh_token_repo.get(command.refresh_token)
+        token = self.refresh_token_repo.get_by_token(command.refresh_token)
         if not token:
             # Idempotent logout - if it doesn't exist, ignore or throw error
             # We'll throw to be explicit, but idempotent is often fine too.

@@ -36,7 +36,10 @@ class LangchainToolProviderAdapter(ToolProviderPort):
             get_current_time,
             calculator,
             get_weather,
-            build_rag_tool(auth_user_id, file_id, self._search_chunks)
         ]
+        
+        # Only add the document search tool if there is a file context available
+        if file_id is not None:
+            tools.append(build_rag_tool(auth_user_id, file_id, self._search_chunks))
             
         return tools
