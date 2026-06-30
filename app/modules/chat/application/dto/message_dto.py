@@ -13,6 +13,7 @@ class MessageDTO:
     id: uuid.UUID
     role: MessageRole
     content: str
+    thinking_content: str | None
     created_at: datetime
 
     @classmethod
@@ -21,5 +22,6 @@ class MessageDTO:
             id=entity.id,
             role=entity.role,
             content=entity.content,
+            thinking_content=entity.thinking_content,
             created_at=entity.created_at,
         )

@@ -24,6 +24,7 @@ class Message(Entity[uuid.UUID]):
         role: MessageRole,
         content: str,
         created_at: datetime,
+        thinking_content: str | None = None,
     ) -> None:
         if not content or not content.strip():
             raise EmptyMessageContent()
@@ -31,10 +32,11 @@ class Message(Entity[uuid.UUID]):
         self._role = role
         self._content = content
         self._created_at = created_at
+        self._thinking_content = thinking_content
 
     @classmethod
-    def create(cls, role: MessageRole, content: str) -> "Message":
-        return cls(id=generate_uuid(), role=role, content=content, created_at=utc_now())
+    def create(cls, role: MessageRole, content: str, thinking_content: str | None = None) -> "Message":
+        return cls(id=generate_uuid(), role=role, content=content, created_at=utc_now(), thinking_content=thinking_content)
 
     @property
     def role(self) -> MessageRole:
@@ -47,3 +49,7 @@ class Message(Entity[uuid.UUID]):
     @property
     def created_at(self) -> datetime:
         return self._created_at
+
+    @property
+    def thinking_content(self) -> str | None:
+        return self._thinking_content

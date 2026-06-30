@@ -20,6 +20,7 @@ class ChatViewMapper:
             id=message.id,
             role=message.role,
             content=message.content,
+            thinking_content=message.thinking_content,
             created_at=message.created_at,
         )
 
@@ -48,5 +49,4 @@ class ChatViewMapper:
             conversation_id=result.conversation.id,
             user_message=ChatViewMapper.message(result.user_message),
             assistant_message=ChatViewMapper.message(result.assistant_message),
-            reasoning=result.reasoning,
         )
