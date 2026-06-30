@@ -211,10 +211,10 @@ pipeline {
                     echo "🗄️ Running database migrations and seeding..."
                     if (isUnix()) {
                         sh "docker compose -f ${composeFile} --env-file ${envFile} exec -T app alembic upgrade head"
-                        sh "docker compose -f ${composeFile} --env-file ${envFile} exec -T app python seeding/seed.py"
+                        //sh "docker compose -f ${composeFile} --env-file ${envFile} exec -T app python seeding/seed.py"
                     } else {
                         bat "docker compose -f ${composeFile} --env-file ${envFile} exec -T app alembic upgrade head"
-                        bat "docker compose -f ${composeFile} --env-file ${envFile} exec -T app python seeding/seed.py"
+                      //  bat "docker compose -f ${composeFile} --env-file ${envFile} exec -T app python seeding/seed.py"
                     }
                     
                     echo "✅ Deployed successfully!"
