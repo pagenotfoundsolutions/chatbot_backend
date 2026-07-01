@@ -18,7 +18,7 @@ class VectorStorePort(ABC):
         query_embedding: list[float], 
         top_k: int = 5, 
         auth_user_id: Optional[uuid.UUID] = None,
-        file_id: Optional[uuid.UUID] = None,
+        file_ids: Optional[list[uuid.UUID]] = None,
         query_text: Optional[str] = None
     ) -> Sequence[DocumentChunk]:
         """Performs a similarity search using an embedding vector and optional keyword search.

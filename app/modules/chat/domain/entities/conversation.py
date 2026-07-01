@@ -31,6 +31,7 @@ class Conversation(AggregateRoot[uuid.UUID]):
         created_at: datetime,
         updated_at: datetime,
         messages: list[Message] | None = None,
+        file_ids: set[uuid.UUID] | None = None,
     ) -> None:
         super().__init__(id)
         self._auth_user_id = auth_user_id
@@ -38,6 +39,7 @@ class Conversation(AggregateRoot[uuid.UUID]):
         self._created_at = created_at
         self._updated_at = updated_at
         self._messages: list[Message] = list(messages) if messages else []
+        self._file_ids: set[uuid.UUID] = set(file_ids) if file_ids else set()
 
     # --- factory -----------------------------------------------------------
     @classmethod
@@ -69,6 +71,10 @@ class Conversation(AggregateRoot[uuid.UUID]):
         # tuple -> callers cannot mutate the internal list.
         return tuple(self._messages)
 
+    @property
+    def file_ids(self) -> set[uuid.UUID]:
+        return set(self._file_ids)
+
     # --- behaviour ---------------------------------------------------------
     def rename(self, title: str) -> None:
         clean = (title or "").strip()
@@ -77,8 +83,8 @@ class Conversation(AggregateRoot[uuid.UUID]):
         self._title = clean
         self._touch()
 
-    def post_user_message(self, content: str) -> Message:
-        return self._append(MessageRole.USER, content)
+    def post_user_message(self, content: str, file_id: uuid.UUID | None = None) -> Message:
+        return self._append(MessageRole.USER, content, file_id=file_id)
 
     def post_assistant_message(self, content: str, thinking_content: str | None = None) -> Message:
         return self._append(MessageRole.ASSISTANT, content, thinking_content=thinking_content)
@@ -86,9 +92,14 @@ class Conversation(AggregateRoot[uuid.UUID]):
     def post_system_message(self, content: str) -> Message:
         return self._append(MessageRole.SYSTEM, content)
 
+    def attach_file(self, file_id: uuid.UUID) -> None:
+        if file_id not in self._file_ids:
+            self._file_ids.add(file_id)
+            self._touch()
+
     # --- internals ---------------------------------------------------------
-    def _append(self, role: MessageRole, content: str, thinking_content: str | None = None) -> Message:
-        new_msg = Message.create(role=role, content=content, thinking_content=thinking_content)
+    def _append(self, role: MessageRole, content: str, thinking_content: str | None = None, file_id: uuid.UUID | None = None) -> Message:
+        new_msg = Message.create(role=role, content=content, thinking_content=thinking_content, file_id=file_id)
         self._messages.append(new_msg)
         self._touch()
         self.record(

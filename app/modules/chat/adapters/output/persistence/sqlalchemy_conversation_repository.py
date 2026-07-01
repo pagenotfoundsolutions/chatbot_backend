@@ -9,6 +9,7 @@ from app.modules.chat.adapters.output.persistence.conversation_mapper import (
 )
 from app.modules.chat.adapters.output.persistence.models.conversation_model import (
     ConversationModel,
+    ConversationFileModel,
 )
 from app.modules.chat.adapters.output.persistence.models.message_model import (
     MessageModel,
@@ -31,9 +32,9 @@ class SqlAlchemyConversationRepository(ConversationRepositoryPort):
         self._session = session
 
     def save(self, aggregate: Conversation) -> None:
-        exists = self._session.scalar(select(ConversationModel.id).where(ConversationModel.id == aggregate.id))
+        model = self._session.get(ConversationModel, aggregate.id)
 
-        if not exists:
+        if not model:
             model = ConversationModel(
                 id=aggregate.id,
                 auth_user_id=aggregate.auth_user_id,
@@ -43,16 +44,20 @@ class SqlAlchemyConversationRepository(ConversationRepositoryPort):
             )
             self._session.add(model)
         else:
-            stmt = update(ConversationModel).where(ConversationModel.id == aggregate.id).values(
-                title=aggregate.title,
-                updated_at=aggregate.updated_at
-            )
-            self._session.execute(stmt)
+            model.title = aggregate.title
+            model.updated_at = aggregate.updated_at
 
-        existing_ids = set(self._session.scalars(select(MessageModel.id).where(MessageModel.conversation_id == aggregate.id)).all())
+        # Sync files
+        current_file_ids = {f.file_id for f in model.files}
+        new_file_ids = aggregate.file_ids - current_file_ids
+        for fid in new_file_ids:
+            model.files.append(ConversationFileModel(conversation_id=aggregate.id, file_id=fid))
+
+        # Sync messages
+        existing_msg_ids = set(self._session.scalars(select(MessageModel.id).where(MessageModel.conversation_id == aggregate.id)).all())
         new_messages = [
             ConversationMapper.message_to_model(message, aggregate.id)
-            for message in aggregate.messages if message.id not in existing_ids
+            for message in aggregate.messages if message.id not in existing_msg_ids
         ]
         if new_messages:
             self._session.add_all(new_messages)

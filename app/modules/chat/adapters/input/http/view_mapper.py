@@ -22,6 +22,7 @@ class ChatViewMapper:
             content=message.content,
             thinking_content=message.thinking_content,
             created_at=message.created_at,
+            file_id=message.file_id,
         )
 
     @staticmethod

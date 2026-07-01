@@ -15,6 +15,7 @@ class MessageDTO:
     content: str
     thinking_content: str | None
     created_at: datetime
+    file_id: uuid.UUID | None = None
 
     @classmethod
     def from_entity(cls, entity: Message) -> MessageDTO:
@@ -24,4 +25,5 @@ class MessageDTO:
             content=entity.content,
             thinking_content=entity.thinking_content,
             created_at=entity.created_at,
+            file_id=entity.file_id,
         )

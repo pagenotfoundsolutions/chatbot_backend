@@ -56,3 +56,10 @@ class SqlAlchemyFileRepository(FileRepositoryPort):
     def delete(self, id: uuid.UUID) -> None:
         stmt = update(FileModel).where(FileModel.id == id).values(deleted_at=func.now())
         self._session.execute(stmt)
+
+    def get_many_by_ids(self, ids: list[uuid.UUID]) -> list[File]:
+        if not ids:
+            return []
+        stmt = select(FileModel).where(FileModel.id.in_(ids))
+        models = self._session.scalars(stmt).all()
+        return [FileMapper.to_domain(m) for m in models]

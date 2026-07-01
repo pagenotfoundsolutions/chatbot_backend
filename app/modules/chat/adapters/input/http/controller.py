@@ -190,8 +190,6 @@ class ChatController:
             from app.shared.exceptions.exceptions import AppException
             try:
                 for chunk_type, chunk_content in stream_iterator:
-                    # If chunk_type is "thinking", event name is "thinking"
-                    # If chunk_type is "content", event name is "token"
                     event_name = "thinking" if chunk_type == "thinking" else "token"
                     yield _sse(event_name, {"content": chunk_content})
                 yield _sse("done", {"conversation_id": str(conversation_id)})

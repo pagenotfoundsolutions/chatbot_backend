@@ -9,6 +9,7 @@ import app.modules.auth.adapters.output.persistence.models  # noqa: F401
 import app.modules.profile.adapters.output.persistence.models  # noqa: F401
 import app.modules.ai_providers.adapters.output.persistence.models  # noqa: F401
 import app.modules.rag.adapters.output.persistence.models  # noqa: F401
+import app.modules.files.adapters.output.persistence.models  # noqa: F401
 
 
 def init_db() -> None:
