@@ -26,6 +26,7 @@ class ConversationMapper:
             role=MessageRole(model.role),
             content=model.content,
             created_at=model.created_at,
+            file_id=model.file_id,
         )
 
     @staticmethod
@@ -39,6 +40,7 @@ class ConversationMapper:
             messages=[
                 ConversationMapper.message_to_domain(m) for m in model.messages
             ],
+            file_ids={f.file_id for f in model.files},
         )
 
     @staticmethod
@@ -49,4 +51,5 @@ class ConversationMapper:
             role=message.role.value,
             content=message.content,
             created_at=message.created_at,
+            file_id=message.file_id,
         )

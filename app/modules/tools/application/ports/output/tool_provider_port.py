@@ -11,7 +11,7 @@ class ToolProviderPort(ABC):
     def get_all_tools(
         self, 
         auth_user_id: uuid.UUID | None = None, 
-        file_id: uuid.UUID | None = None
+        file_ids: set[uuid.UUID] | list[uuid.UUID] | None = None
     ) -> Sequence[BaseTool]:
         """Returns a list of all active tools."""
         pass

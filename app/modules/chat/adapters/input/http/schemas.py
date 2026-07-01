@@ -32,6 +32,7 @@ class MessageResponse(BaseModel):
     content: str
     thinking_content: str | None = None
     created_at: datetime
+    file_id: uuid.UUID | None = None
 
 
 class ConversationSummaryResponse(BaseModel):

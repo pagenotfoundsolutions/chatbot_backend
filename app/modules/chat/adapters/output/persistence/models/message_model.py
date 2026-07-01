@@ -26,5 +26,6 @@ class MessageModel(CoreModelMixin, Base):
     )
     role: Mapped[str] = mapped_column(String(50), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
+    file_id: Mapped[uuid.UUID | None] = mapped_column(Uuid(as_uuid=True), ForeignKey("files.id", ondelete="SET NULL"), nullable=True, index=True)
 
     conversation: Mapped["ConversationModel"] = relationship(back_populates="messages")

@@ -37,7 +37,7 @@ class SqlAlchemyVectorStoreRepository(VectorStorePort):
         query_embedding: list[float], 
         top_k: int = 5, 
         auth_user_id: Optional[uuid.UUID] = None,
-        file_id: Optional[uuid.UUID] = None,
+        file_ids: Optional[list[uuid.UUID]] = None,
         query_text: Optional[str] = None
     ) -> Sequence[DocumentChunk]:
         
@@ -45,8 +45,8 @@ class SqlAlchemyVectorStoreRepository(VectorStorePort):
         vector_stmt = select(DocumentChunkModel.id)
         if auth_user_id:
             vector_stmt = vector_stmt.filter(DocumentChunkModel.auth_user_id == auth_user_id)
-        if file_id:
-            vector_stmt = vector_stmt.filter(DocumentChunkModel.file_id == file_id)
+        if file_ids:
+            vector_stmt = vector_stmt.filter(DocumentChunkModel.file_id.in_(file_ids))
             
         vector_stmt = vector_stmt.order_by(DocumentChunkModel.embedding.l2_distance(query_embedding)).limit(20)
         vector_results = self._db.scalars(vector_stmt).all()
@@ -57,8 +57,8 @@ class SqlAlchemyVectorStoreRepository(VectorStorePort):
             keyword_stmt = select(DocumentChunkModel.id)
             if auth_user_id:
                 keyword_stmt = keyword_stmt.filter(DocumentChunkModel.auth_user_id == auth_user_id)
-            if file_id:
-                keyword_stmt = keyword_stmt.filter(DocumentChunkModel.file_id == file_id)
+            if file_ids:
+                keyword_stmt = keyword_stmt.filter(DocumentChunkModel.file_id.in_(file_ids))
                 
             tsquery = func.plainto_tsquery('english', query_text)
             keyword_stmt = keyword_stmt.filter(DocumentChunkModel.content_tsvector.op('@@')(tsquery))

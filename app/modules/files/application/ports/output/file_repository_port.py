@@ -21,3 +21,8 @@ class FileRepositoryPort(BaseRepository[File, uuid.UUID], ABC):
     @abstractmethod
     def list_by_user(self, auth_user_id: uuid.UUID, page: int, size: int) -> tuple[list[File], int]:
         ...
+
+    @abstractmethod
+    def get_many_by_ids(self, ids: list[uuid.UUID]) -> list[File]:
+        """Fetch multiple files by their IDs in a single query."""
+        ...

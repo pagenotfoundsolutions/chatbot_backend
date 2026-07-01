@@ -21,7 +21,7 @@ class LangchainToolProviderAdapter(ToolProviderPort):
     def get_all_tools(
         self, 
         auth_user_id: uuid.UUID | None = None, 
-        file_id: uuid.UUID | None = None
+        file_ids: set[uuid.UUID] | list[uuid.UUID] | None = None
     ) -> Sequence[BaseTool]:
         """Returns a list of all initialized LangChain tools."""
         
@@ -39,7 +39,8 @@ class LangchainToolProviderAdapter(ToolProviderPort):
         ]
         
         # Only add the document search tool if there is a file context available
-        if file_id is not None:
-            tools.append(build_rag_tool(auth_user_id, file_id, self._search_chunks))
+        if file_ids:
+            file_ids_list = list(file_ids)
+            tools.append(build_rag_tool(auth_user_id, file_ids_list, self._search_chunks))
             
         return tools

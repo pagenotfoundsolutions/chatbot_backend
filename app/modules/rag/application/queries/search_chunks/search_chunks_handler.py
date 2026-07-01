@@ -32,7 +32,7 @@ class SearchChunksHandler(SearchChunksUseCase):
             query_embedding=query_embedding,
             top_k=20,  # over-fetch for reranking
             auth_user_id=query.auth_user_id,
-            file_id=query.file_id,
+            file_ids=query.file_ids,
             query_text=query.text
         )
         

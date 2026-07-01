@@ -11,7 +11,7 @@ class GetAllToolsUseCase(ABC):
     def execute(
         self, 
         auth_user_id: uuid.UUID | None = None, 
-        file_id: uuid.UUID | None = None
+        file_ids: set[uuid.UUID] | list[uuid.UUID] | None = None
     ) -> Sequence[BaseTool]:
         """Returns the active list of tools."""
         pass

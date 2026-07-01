@@ -6,7 +6,7 @@ from app.modules.rag.application.queries.search_chunks.search_chunks_query impor
 
 def build_rag_tool(
     auth_user_id: uuid.UUID | None = None,
-    file_id: uuid.UUID | None = None,
+    file_ids: list[uuid.UUID] | None = None,
     search_chunks_use_case: SearchChunksUseCase | None = None
 ) -> BaseTool:
     """Builds a LangChain tool for searching documents with the given context."""
@@ -14,13 +14,13 @@ def build_rag_tool(
     @tool
     def search_document(query: str) -> str:
         """Searches the user's uploaded document for relevant information to answer their question."""
-        if not auth_user_id or not file_id or not search_chunks_use_case:
+        if not auth_user_id or not file_ids or not search_chunks_use_case:
             return "Error: Missing document context to perform search."
             
         search_query = SearchChunksQuery(
             text=query,
             auth_user_id=auth_user_id,
-            file_id=file_id,
+            file_ids=file_ids,
             top_k=3
         )
         try:

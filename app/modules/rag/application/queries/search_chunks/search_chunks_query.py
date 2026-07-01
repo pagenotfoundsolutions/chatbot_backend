@@ -8,4 +8,4 @@ class SearchChunksQuery:
     text: str
     auth_user_id: uuid.UUID
     top_k: int = 5
-    file_id: Optional[uuid.UUID] = None
+    file_ids: Optional[list[uuid.UUID]] = None

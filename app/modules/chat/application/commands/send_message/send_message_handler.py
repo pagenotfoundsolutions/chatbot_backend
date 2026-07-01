@@ -138,45 +138,58 @@ class SendMessageHandler(SendMessageUseCase):
         if not config:
             raise ProviderConfigurationNotFound(command.provider_id, command.model_id)
             
-        user_message = conversation.post_user_message(content)
+        user_message = conversation.post_user_message(content=command.content, file_id=command.file_id)
         
-        tools = list(self._get_all_tools.execute(command.auth_user_id, command.file_id)) if self._get_all_tools else []
+        if command.file_id:
+            conversation.attach_file(command.file_id)
+
+        active_file_ids = conversation.file_ids
+
+        tools = list(self._get_all_tools.execute(command.auth_user_id, active_file_ids)) if self._get_all_tools else []
         if not config.supports("tools"):
             tools = []
             
         self._validate_capabilities(command, config, tools)
         
         system_prompt = "You are a helpful assistant."
-        if command.file_id and self._file_repo:
-            file_entity = self._file_repo.get(command.file_id)
-            if file_entity:
-                from app.modules.files.domain.enums.file_status import FileStatus
-                
-                status_warning = ""
-                if file_entity.status != FileStatus.PARSED:
-                    status_warning = (
-                        f"\n\nNOTE: The file is currently being processed by the system (Status: {file_entity.status.value}). "
-                        f"You CAN answer questions about the file's metadata (name, type, size) using the context above. "
-                        f"HOWEVER, if the user asks about the file's CONTENTS, you must inform them that the file is still processing and they should wait."
-                    )
+        if active_file_ids and self._file_repo:
+            file_contexts = []
+            # Optimization: Fetch all file entities in a single query
+            file_entities = self._file_repo.get_many_by_ids(list(active_file_ids))
+            
+            # Create a quick lookup map by ID (to check missing files)
+            found_files_map = {entity.id: entity for entity in file_entities}
+            
+            for fid in active_file_ids:
+                file_entity = found_files_map.get(fid)
+                if file_entity:
+                    from app.modules.files.domain.enums.file_status import FileStatus
                     
+                    status_warning = ""
+                    if file_entity.status != FileStatus.PARSED:
+                        status_warning = (
+                            f"\nNOTE: The file is currently being processed by the system (Status: {file_entity.status.value}). "
+                            f"You CAN answer questions about the file's metadata (name, type, size) using the context above. "
+                            f"HOWEVER, if the user asks about the file's CONTENTS, you must inform them that the file is still processing and they should wait."
+                        )
+                    file_contexts.append(
+                        f"- File Name: {file_entity.original_filename}\n"
+                        f"- Mime Type: {file_entity.mime_type}\n"
+                        f"- Size: {file_entity.size_bytes} bytes"
+                        f"{status_warning}"
+                    )
+                else:
+                    logger.warning(f"File {fid} not found in DB")
+            
+            if file_contexts:
                 system_prompt += (
-                    f"\n\n[ATTACHED FILE CONTEXT]\n"
-                    f"The user has attached a file to this conversation.\n"
-                    f"- File Name: {file_entity.original_filename}\n"
-                    f"- Mime Type: {file_entity.mime_type}\n"
-                    f"- Size: {file_entity.size_bytes} bytes\n"
-                    f"{status_warning}\n\n"
-                    f"IMPORTANT INSTRUCTION: If the user asks ANY question about the file "
-                    f"(like what type of file it is, its name, or its contents), you MUST use this context. "
-                    f"If they ask about its contents, you MUST use the `search_document` tool. Do NOT guess."
+                    f"\n\n[ATTACHED FILES CONTEXT]\n"
+                    f"The user has attached the following files to this conversation:\n\n"
+                    + "\n\n".join(file_contexts) +
+                    f"\n\nIMPORTANT INSTRUCTION: If the user asks ANY question about these files "
+                    f"(like what type they are, their names, or their contents), you MUST use this context. "
+                    f"If they ask about their contents, you MUST use the `search_document` tool. Do NOT guess."
                 )
-            else:
-                print(f"WARNING: File {command.file_id} not found in DB")
-        else:
-            print(f"WARNING: file_id={command.file_id}, file_repo={self._file_repo}")
-                
-        print(f"Final System Prompt: {system_prompt}")
         return conversation, user_message, config, tools, system_prompt
 
     def _validate_capabilities(self, command: SendMessageCommand, config: ProviderConfigDTO, tools: list[Any]) -> None:
