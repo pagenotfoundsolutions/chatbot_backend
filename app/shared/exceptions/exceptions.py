@@ -16,3 +16,7 @@ class ValidationException(AppException):
 class UnauthorizedException(AppException):
     def __init__(self, message: str = "Unauthorized"):
         super().__init__(message=message, status_code=401)
+
+class ConflictException(AppException):
+    def __init__(self, message: str = "Conflict"):
+        super().__init__(message=message, status_code=409)

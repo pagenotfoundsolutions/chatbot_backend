@@ -26,3 +26,8 @@ class FileRepositoryPort(BaseRepository[File, uuid.UUID], ABC):
     def get_many_by_ids(self, ids: list[uuid.UUID]) -> list[File]:
         """Fetch multiple files by their IDs in a single query."""
         ...
+
+    @abstractmethod
+    def undelete(self, id: uuid.UUID) -> None:
+        """Restore a soft-deleted file."""
+        ...

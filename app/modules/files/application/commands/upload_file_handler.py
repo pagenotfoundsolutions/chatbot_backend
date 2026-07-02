@@ -41,7 +41,18 @@ class UploadFileHandler(UploadFileUseCase):
         # Check if file with same hash exists for THIS user
         existing_file = self._repository.get_by_user_and_hash(command.auth_user_id, file_hash)
         if existing_file:
-            raise FileAlreadyExistsError(existing_file.id)
+            if not existing_file.is_deleted:
+                return FileDTO.from_entity(existing_file)
+            else:
+                # File was soft-deleted. Restore it instead of re-uploading,
+                # since the physical file on storage was intentionally kept.
+                self._repository.undelete(existing_file.id)
+                # Fetch the restored version (without deleted_at) so mapper behaves correctly
+                restored_file = self._repository.get(existing_file.id)
+                if restored_file:
+                    return FileDTO.from_entity(restored_file)
+                # Fallback if somehow get() fails (shouldn't happen)
+                return FileDTO.from_entity(existing_file)
 
         # Generate a secure stored filename scoped to the user directory
         # E.g. "auth_user_id/uuid_ext"

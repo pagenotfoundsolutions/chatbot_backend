@@ -20,6 +20,7 @@ class FileMapper:
             error_message=model.error_message,
             created_at=model.created_at,
             updated_at=model.updated_at,
+            is_deleted=model.deleted_at is not None,
         )
 
     @staticmethod
@@ -38,3 +39,7 @@ class FileMapper:
             created_at=entity.created_at,
             updated_at=entity.updated_at,
         )
+        if entity.is_deleted:
+            from app.shared.kernel.utils import utc_now
+            model.deleted_at = utc_now()
+        return model

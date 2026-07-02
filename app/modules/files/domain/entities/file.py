@@ -24,6 +24,7 @@ class File(AggregateRoot[uuid.UUID]):
         error_message: str | None,
         created_at: datetime,
         updated_at: datetime,
+        is_deleted: bool = False,
     ) -> None:
         super().__init__(id)
         self._auth_user_id = auth_user_id
@@ -37,6 +38,7 @@ class File(AggregateRoot[uuid.UUID]):
         self._error_message = error_message
         self._created_at = created_at
         self._updated_at = updated_at
+        self._is_deleted = is_deleted
 
     @classmethod
     def create(
@@ -111,6 +113,10 @@ class File(AggregateRoot[uuid.UUID]):
     @property
     def updated_at(self) -> datetime:
         return self._updated_at
+
+    @property
+    def is_deleted(self) -> bool:
+        return self._is_deleted
 
     # --- behaviors ---
     

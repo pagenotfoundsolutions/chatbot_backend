@@ -35,6 +35,6 @@ class ConversationModel(CoreModelMixin, Base):
     messages: Mapped[list[MessageModel]] = relationship(
         back_populates="conversation",
         cascade="all, delete-orphan",
-        order_by="MessageModel.created_at.desc()",
+        order_by="MessageModel.created_at.asc()",
         lazy="selectin",
     )
