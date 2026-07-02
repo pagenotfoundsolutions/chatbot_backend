@@ -31,6 +31,9 @@ class Settings(BaseSettings):
         "http://localhost:3002",
         "https://chatbot.pagenotfoundsolutions.cloud",
     ]
+    
+    # --- LLM API Keys ---
+    nvidia_api_key: str | None = None
 
     # --- database ---
     database_url: str

@@ -2,7 +2,9 @@ import uuid
 from fastapi import APIRouter, Depends, UploadFile, File as FastAPIFile, status, BackgroundTasks
 from app.modules.files.adapters.input.http.api.schemas import FileResponse
 from app.modules.files.application.ports.input.upload_file_use_case import UploadFileUseCase, UploadFileCommand
-from app.modules.files.adapters.input.http.api.dependencies import get_upload_file_use_case, get_list_files_use_case, get_download_file_use_case
+from app.modules.files.adapters.input.http.api.dependencies import get_upload_file_use_case, get_list_files_use_case, get_download_file_use_case, get_file_detail_use_case, get_delete_file_use_case
+from app.modules.files.application.ports.input.get_file_detail_use_case import GetFileDetailUseCase, GetFileDetailQuery
+from app.modules.files.application.ports.input.delete_file_use_case import DeleteFileUseCase, DeleteFileCommand
 from app.shared.security.dependencies import get_current_user_id
 from app.modules.files.application.ports.input.list_files_use_case import ListFilesUseCase, ListFilesQuery
 from app.modules.files.application.ports.input.download_file_use_case import DownloadFileUseCase, DownloadFileQuery
@@ -32,9 +34,11 @@ def upload_file(
     )
     dto = upload_file_use_case.execute(command)
     
-    # Trigger RAG indexing in the background
-    index_cmd = IndexFileCommand(file_id=dto.id, auth_user_id=dto.auth_user_id)
-    background_tasks.add_task(index_file_use_case.execute, index_cmd)
+    # Trigger RAG indexing in the background only if it's not already parsed
+    from app.modules.files.domain.enums.file_status import FileStatus
+    if dto.status in (FileStatus.PENDING.value, FileStatus.ERROR.value):
+        index_cmd = IndexFileCommand(file_id=dto.id, auth_user_id=dto.auth_user_id)
+        background_tasks.add_task(index_file_use_case.execute, index_cmd)
     
     file_response = FileResponse(
         id=dto.id,
@@ -86,6 +90,41 @@ def list_files(
         size=dto_page.size
     )
     return SuccessResp(message="Files retrieved successfully", data=page_data)
+
+@router.get("/detail/{file_id}", response_model=SuccessResp[FileResponse], status_code=status.HTTP_200_OK)
+def get_file_detail(
+    file_id: uuid.UUID,
+    current_user_id: uuid.UUID = Depends(get_current_user_id),
+    get_file_detail_use_case: GetFileDetailUseCase = Depends(get_file_detail_use_case),
+):
+    query = GetFileDetailQuery(auth_user_id=current_user_id, file_id=file_id)
+    dto = get_file_detail_use_case.execute(query)
+
+    file_response = FileResponse(
+        id=dto.id,
+        auth_user_id=dto.auth_user_id,
+        original_filename=dto.original_filename,
+        mime_type=dto.mime_type,
+        size_bytes=dto.size_bytes,
+        status=dto.status,
+        error_message=dto.error_message,
+        created_at=dto.created_at,
+        updated_at=dto.updated_at,
+        file_path=dto.storage_path
+    )
+    return SuccessResp(message="File retrieved successfully", data=file_response)
+
+
+@router.delete("/{file_id}", response_model=SuccessResp[None], status_code=status.HTTP_200_OK)
+def delete_file(
+    file_id: uuid.UUID,
+    current_user_id: uuid.UUID = Depends(get_current_user_id),
+    delete_file_use_case: DeleteFileUseCase = Depends(get_delete_file_use_case),
+):
+    command = DeleteFileCommand(auth_user_id=current_user_id, file_id=file_id)
+    delete_file_use_case.execute(command)
+    return SuccessResp(message="File deleted successfully", data=None)
+
 
 @router.get("/{file_path:path}", response_class=StreamingResponse, status_code=status.HTTP_200_OK)
 def download_file(

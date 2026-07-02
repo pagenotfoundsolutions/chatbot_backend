@@ -137,6 +137,8 @@ class LangchainDocumentProcessorAdapter(DocumentProcessorPort):
             else:
                 page_num = 1
                 
-            chunks.append(ChunkDTO(content=doc.page_content, page_number=page_num))
+            # PostgreSQL text fields cannot contain NUL (0x00) bytes
+            content = doc.page_content.replace("\x00", "")
+            chunks.append(ChunkDTO(content=content, page_number=page_num))
             
         return chunks

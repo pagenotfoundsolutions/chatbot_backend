@@ -40,11 +40,11 @@ class IndexFileHandler:
             from app.modules.files.domain.enums.file_status import FileStatus
             try:
                 # Mark as processing
-                file_entity.status = FileStatus.PROCESSING
+                file_entity.mark_as_processing()
                 fresh_file_repo.save(file_entity)
                 
                 # Resolve actual file path
-                base_dir = os.path.join(settings.storage_path) if hasattr(settings, "storage_path") else "storage"
+                base_dir = settings.upload_dir if hasattr(settings, "upload_dir") else "storage/uploads"
                 file_path = os.path.join(base_dir, file_entity.storage_path)
                 if not os.path.exists(file_path):
                     file_path = file_entity.storage_path 
@@ -52,7 +52,7 @@ class IndexFileHandler:
                 # 2. Extract and chunk text using the processor port
                 chunks_dto = self.document_processor.extract_and_chunk(file_path, file_entity.mime_type)
                 if not chunks_dto:
-                    file_entity.status = FileStatus.PARSED
+                    file_entity.mark_as_parsed()
                     fresh_file_repo.save(file_entity)
                     return
 
@@ -75,15 +75,16 @@ class IndexFileHandler:
 
                 # 5. Store in Vector DB
                 if chunks:
+                    # Idempotency: clear existing chunks for this file if any
+                    self.vector_store.delete_by_file_id(command.file_id)
                     self.vector_store.save_chunks(chunks)
                     
                 # Mark as successfully parsed
-                file_entity.status = FileStatus.PARSED
+                file_entity.mark_as_parsed()
                 fresh_file_repo.save(file_entity)
                 
             except Exception as e:
-                file_entity.status = FileStatus.ERROR
-                file_entity.error_message = str(e)
+                file_entity.mark_as_error(str(e))
                 fresh_file_repo.save(file_entity)
                 raise e
 

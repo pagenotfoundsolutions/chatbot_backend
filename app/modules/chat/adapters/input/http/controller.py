@@ -194,8 +194,12 @@ class ChatController:
                     yield _sse(event_name, {"content": chunk_content})
                 yield _sse("done", {"conversation_id": str(conversation_id)})
             except AppException as e:
+                import logging
+                logging.getLogger(__name__).error(f"AppException in stream: {e}", exc_info=True)
                 yield _sse("error", {"detail": getattr(e, "message", str(e))})
             except Exception as e:
+                import logging
+                logging.getLogger(__name__).error(f"Unhandled exception in stream: {e}", exc_info=True)
                 yield _sse("error", {"detail": str(e)})
             
         return _stream()

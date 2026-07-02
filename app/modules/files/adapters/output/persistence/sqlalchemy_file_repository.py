@@ -14,8 +14,16 @@ class SqlAlchemyFileRepository(FileRepositoryPort):
         self._session = session
 
     def save(self, file: File) -> None:
-        db_file = FileMapper.to_persistence(file)
-        self._session.merge(db_file)
+        db_file = self._session.get(FileModel, file.id, execution_options={"include_deleted": True})
+        if db_file:
+            db_file.status = file.status
+            db_file.error_message = file.error_message
+            db_file.updated_at = file.updated_at
+            if file.is_deleted and db_file.deleted_at is None:
+                db_file.deleted_at = func.now()
+        else:
+            db_file = FileMapper.to_persistence(file)
+            self._session.add(db_file)
         self._session.commit()
 
     def get(self, id: uuid.UUID) -> Optional[File]:
@@ -28,7 +36,7 @@ class SqlAlchemyFileRepository(FileRepositoryPort):
         stmt = select(FileModel).where(
             FileModel.auth_user_id == auth_user_id,
             FileModel.file_hash == file_hash
-        )
+        ).execution_options(include_deleted=True)
         db_file = self._session.scalar(stmt)
         if db_file:
             return FileMapper.to_domain(db_file)
@@ -56,6 +64,12 @@ class SqlAlchemyFileRepository(FileRepositoryPort):
     def delete(self, id: uuid.UUID) -> None:
         stmt = update(FileModel).where(FileModel.id == id).values(deleted_at=func.now())
         self._session.execute(stmt)
+        self._session.commit()
+
+    def undelete(self, id: uuid.UUID) -> None:
+        stmt = update(FileModel).where(FileModel.id == id).values(deleted_at=None)
+        self._session.execute(stmt)
+        self._session.commit()
 
     def get_many_by_ids(self, ids: list[uuid.UUID]) -> list[File]:
         if not ids:
