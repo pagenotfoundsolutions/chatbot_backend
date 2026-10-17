@@ -50,8 +50,9 @@ pipeline {
         }
 
         // ============================================
-        // Stage 3: Docker Build Final Image
+        // Stage 3: Docker Build Final Image (Disabled - building locally without Docker Hub)
         // ============================================
+        /*
         stage('Docker Build Final Image') {
             when {
                 anyOf {
@@ -63,44 +64,19 @@ pipeline {
                 script {
                     echo "🔨 Building final production image..."
                     
-                    // Get Docker Hub username from credentials
                     withCredentials([usernamePassword(
                         credentialsId: DOCKER_CREDENTIALS_ID, 
                         usernameVariable: 'DOCKER_USER', 
                         passwordVariable: 'DOCKER_PASS'
                     )]) {
-                        // Build image name using credentials username
                         def imageName = "${DOCKER_REGISTRY}/${DOCKER_USER}/${APP_NAME}:${env.IMAGE_TAG}"
-                        
-                        // Docker login (COMMENTED OUT)
-                        /*
-                        if (isUnix()) {
-                            sh "echo ${DOCKER_PASS} | docker login ${DOCKER_REGISTRY} -u ${DOCKER_USER} --password-stdin"
-                        } else {
-                            bat "echo ${DOCKER_PASS} | docker login ${DOCKER_REGISTRY} -u ${DOCKER_USER} --password-stdin"
-                        }
-                        */
-                        
-                        // Build final runtime image
                         def image = docker.build(imageName, "-f docker/Dockerfile .")
-                        
-                        // Push to Docker Hub (COMMENTED OUT)
-                        // image.push()
-                        
-                        // Logout (COMMENTED OUT)
-                        /*
-                        if (isUnix()) {
-                            sh 'docker logout'
-                        } else {
-                            bat 'docker logout'
-                        }
-                        */
-                        
-                        echo "✅ Docker image built: ${imageName} (push commented out)"
+                        echo "✅ Docker image built: ${imageName}"
                     }
                 }
             }
         }
+        */
 
         // ============================================
         // Stage 4: Deploy to Environment
@@ -181,21 +157,12 @@ pipeline {
                             bat "docker compose -f ${composeFile} --env-file ${envFile} up -d --build"
                         }
                     } else {
-                        // Prod: Pull image from registry
-                        withCredentials([usernamePassword(
-                            credentialsId: DOCKER_CREDENTIALS_ID, 
-                            usernameVariable: 'DOCKER_USER', 
-                            passwordVariable: 'DOCKER_PASS'
-                        )]) {
-                            def imageName = "${DOCKER_REGISTRY}/${DOCKER_USER}/${APP_NAME}:${env.IMAGE_TAG}"
-                            
-                    if (isUnix()) {
-                                sh "WORKER_IMAGE=${imageName} docker compose -f ${composeFile} --env-file ${envFile} pull app"
-                                sh "WORKER_IMAGE=${imageName} docker compose -f ${composeFile} --env-file ${envFile} up -d --wait"
-                            } else {
-                                bat "set WORKER_IMAGE=${imageName} && docker compose -f ${composeFile} --env-file ${envFile} pull app"
-                                bat "set WORKER_IMAGE=${imageName} && docker compose -f ${composeFile} --env-file ${envFile} up -d --wait"
-                            }
+                        // Prod: Build locally and deploy (no Docker Hub push/pull)
+                        echo "🚀 Building and starting production containers locally..."
+                        if (isUnix()) {
+                            sh "docker compose -f ${composeFile} --env-file ${envFile} up -d --build --wait"
+                        } else {
+                            bat "docker compose -f ${composeFile} --env-file ${envFile} up -d --build --wait"
                         }
                     }
                     
