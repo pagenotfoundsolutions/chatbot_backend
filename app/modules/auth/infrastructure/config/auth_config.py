@@ -5,11 +5,8 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-import os
-
-# Default to env/.env.dev if APP_ENV is not set
-_APP_ENV = os.getenv("APP_ENV", "dev")
-_ENV_FILE = Path(__file__).resolve().parents[5] / "env" / f".env.{_APP_ENV}"
+# Runtime differences live in one local env file; Compose injects the same file.
+_ENV_FILE = Path(__file__).resolve().parents[5] / "env" / ".env"
 
 
 class AuthConfig(BaseSettings):

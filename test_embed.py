@@ -1,8 +1,8 @@
 import os
 import sys
-# Load .env.dev
+# Load the unified local environment.
 from dotenv import load_dotenv
-load_dotenv('env/.env.dev')
+load_dotenv('env/.env')
 
 from langchain_nvidia_ai_endpoints import NVIDIAEmbeddings
 try:
