@@ -19,8 +19,23 @@ services:
       - APP_ENV=prod
     networks:
       - shared-db-net
-    # In production, we don't use auto-reload
-    command: bash -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    # Wait for DB → run migrations → start server
+    command: >
+      bash -c "
+        echo '⏳ Waiting for database to be ready...' &&
+        until pg_isready -h shared-postgres -p 5432 -U ${POSTGRES_USER:-chatbot_db}; do
+          echo '  DB not ready yet, retrying in 3s...' && sleep 3;
+        done &&
+        echo '✅ Database is ready!' &&
+        alembic upgrade head &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000
+      "
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   # pgadmin:
   #   image: dpage/pgadmin4
