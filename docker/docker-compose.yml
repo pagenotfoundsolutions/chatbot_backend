@@ -1,0 +1,53 @@
+name: ${PROJECT_NAME:-chatbot}
+
+services:
+  app:
+    container_name: ${APP_CONTAINER_NAME:-chatbot_app}
+    image: ${WORKER_IMAGE:-chatbot_app:latest}
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "${APP_PORT:-18100}:8000"
+    volumes:
+      # Production: app_uploads:/app/storage/uploads
+      # Development: ../:/app (set APP_RUNTIME_MOUNT in env/.env)
+      - ${APP_RUNTIME_MOUNT:-app_uploads:/app/storage/uploads}
+    env_file:
+      - ../env/.env
+    environment:
+      APP_ENV: ${APP_ENV:-prod}
+      # Keep placeholders literal. Settings safely URL-encodes credentials.
+      DATABASE_URL: postgresql+psycopg://$${POSTGRES_USER}:$${POSTGRES_PASSWORD}@shared-postgres:5432/$${POSTGRES_DB}
+    networks:
+      - shared-db-net
+    command:
+      - /bin/bash
+      - -c
+      - |
+        set -e
+        echo 'Waiting for the shared database...'
+        until pg_isready -h shared-postgres -p 5432 -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"; do
+          sleep 2
+        done
+        alembic upgrade head
+        reload_args=()
+        if [ "$${APP_RELOAD:-false}" = "true" ]; then
+          reload_args+=(--reload)
+        fi
+        exec uvicorn app.main:app --host 0.0.0.0 --port 8000 "$${reload_args[@]}"
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  app_uploads:
+    name: ${APP_UPLOAD_VOLUME:-chatbot_app_uploads}
+
+networks:
+  shared-db-net:
+    external: true
+    name: shared-db-net

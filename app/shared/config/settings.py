@@ -5,11 +5,10 @@ from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-import os
+from urllib.parse import quote_plus
 
-# Default to env/.env.dev if APP_ENV is not set
-_APP_ENV = os.getenv("APP_ENV", "dev")
-_ENV_FILE = Path(__file__).resolve().parents[3] / "env" / f".env.{_APP_ENV}"
+# Runtime differences live in one local env file; Compose injects the same file.
+_ENV_FILE = Path(__file__).resolve().parents[3] / "env" / ".env"
 
 
 class Settings(BaseSettings):
@@ -46,7 +45,11 @@ class Settings(BaseSettings):
     def interpolate_db_url(self) -> "Settings":
         if self.database_url:
             self.database_url = self.database_url.replace("${POSTGRES_USER}", self.postgres_user)
-            self.database_url = self.database_url.replace("${POSTGRES_PASSWORD}", self.postgres_password)
+            # Credentials may contain URL-reserved characters such as ``@``.
+            # Encode them before inserting them into the SQLAlchemy URL.
+            self.database_url = self.database_url.replace(
+                "${POSTGRES_PASSWORD}", quote_plus(self.postgres_password)
+            )
             self.database_url = self.database_url.replace("${POSTGRES_DB}", self.postgres_db)
         return self
 

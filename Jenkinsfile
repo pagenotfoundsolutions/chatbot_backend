@@ -93,21 +93,15 @@ pipeline {
             }
             steps {
                 script {
-                    def composeFile = ''
-                    def envFile = ''
+                    def composeFile = 'docker/docker-compose.yml'
+                    def envFile = 'env/.env'
                     def envCredentialId = ''
-                    def isProd = false
                     
                     // Determine compose file and environment based on branch
                     if (env.BRANCH_NAME == 'dev' || env.BRANCH_NAME == 'develop') {
-                        composeFile = 'docker/docker-compose.dev.yml'
-                        envFile = 'env/.env.dev'
                         envCredentialId = 'chatbot-env-dev'
                     } else {
-                        composeFile = 'docker/docker-compose.prod.yml'
-                        envFile = 'env/.env.prod'
                         envCredentialId = 'chatbot-env-prod'
-                        isProd = true
                     }
                     
                     echo "📦 Deploying with: ${composeFile} and env file: ${envFile}"
@@ -144,26 +138,18 @@ pipeline {
                     // Stop existing containers
                     if (isUnix()) {
                         sh "docker compose -f ${composeFile} --env-file ${envFile} down || true"
+                        // Remove containers created by the retired split Compose files.
+                        sh "docker rm -f chatbot_dev_app chatbot_prod_app 2>/dev/null || true"
                     } else {
                         bat "docker compose -f ${composeFile} --env-file ${envFile} down 2>nul || exit 0"
+                        bat "docker rm -f chatbot_dev_app chatbot_prod_app 2>nul || exit 0"
                     }
                     
-                    // Start containers
-                    if (!isProd) {
-                        // Dev: Build locally
-                        if (isUnix()) {
-                            sh "docker compose -f ${composeFile} --env-file ${envFile} up -d --build"
-                        } else {
-                            bat "docker compose -f ${composeFile} --env-file ${envFile} up -d --build"
-                        }
+                    // Start the same service definition for every environment.
+                    if (isUnix()) {
+                        sh "docker compose -f ${composeFile} --env-file ${envFile} up -d --build --wait"
                     } else {
-                        // Prod: Build locally and deploy (no Docker Hub push/pull)
-                        echo "🚀 Building and starting production containers locally..."
-                        if (isUnix()) {
-                            sh "docker compose -f ${composeFile} --env-file ${envFile} up -d --build --wait"
-                        } else {
-                            bat "docker compose -f ${composeFile} --env-file ${envFile} up -d --build --wait"
-                        }
+                        bat "docker compose -f ${composeFile} --env-file ${envFile} up -d --build --wait"
                     }
                     
                     // ✅ --wait ensures Docker waits until healthcheck passes before proceeding

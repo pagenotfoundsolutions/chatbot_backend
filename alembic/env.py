@@ -21,7 +21,10 @@ from app.shared.database.database import Base
 # We must import init_db to ensure all models are imported before metadata generation
 import app.shared.database.init_db
 
-config.set_main_option("sqlalchemy.url", settings.database_url)
+# ConfigParser treats percent-encoded URL characters (for example ``%40`` in
+# passwords) as interpolation markers. Escape them before handing the URL to
+# Alembic; SQLAlchemy receives the original single-percent URL.
+config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
