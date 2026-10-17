@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs ls -la)",
+      "Bash(python -c ' *)",
+      "Bash(flutter analyze *)",
+      "Bash(timeout 300 dart run build_runner build --delete-conflicting-outputs)",
+      "Bash(timeout 300 dart run build_runner build)"
+    ]
+  }
+}
