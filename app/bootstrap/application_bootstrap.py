@@ -61,4 +61,9 @@ def create_app() -> FastAPI:
 
     app.include_router(build_api_router(), prefix="/api")
 
+    # Lightweight health endpoint — used by Docker healthcheck (compose --wait)
+    @app.get("/health", tags=["health"], include_in_schema=False)
+    def health() -> dict:
+        return {"status": "ok"}
+
     return app

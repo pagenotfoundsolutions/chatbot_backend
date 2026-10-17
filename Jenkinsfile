@@ -189,35 +189,19 @@ pipeline {
                         )]) {
                             def imageName = "${DOCKER_REGISTRY}/${DOCKER_USER}/${APP_NAME}:${env.IMAGE_TAG}"
                             
-                            if (isUnix()) {
+                    if (isUnix()) {
                                 sh "WORKER_IMAGE=${imageName} docker compose -f ${composeFile} --env-file ${envFile} pull app"
-                                sh "WORKER_IMAGE=${imageName} docker compose -f ${composeFile} --env-file ${envFile} up -d"
+                                sh "WORKER_IMAGE=${imageName} docker compose -f ${composeFile} --env-file ${envFile} up -d --wait"
                             } else {
                                 bat "set WORKER_IMAGE=${imageName} && docker compose -f ${composeFile} --env-file ${envFile} pull app"
-                                bat "set WORKER_IMAGE=${imageName} && docker compose -f ${composeFile} --env-file ${envFile} up -d"
+                                bat "set WORKER_IMAGE=${imageName} && docker compose -f ${composeFile} --env-file ${envFile} up -d --wait"
                             }
                         }
                     }
                     
-                    // Wait for the containers to be fully up and ready
-                    echo "⏳ Waiting for containers to start..."
-                    if (isUnix()) {
-                        sh "sleep 10"
-                    } else {
-                        bat "timeout /t 10 /nobreak >nul"
-                    }
-                    
-                    // Run database migrations and seeding
-                    echo "🗄️ Running database migrations and seeding..."
-                    if (isUnix()) {
-                        sh "docker compose -f ${composeFile} --env-file ${envFile} exec -T app alembic upgrade head"
-                        //sh "docker compose -f ${composeFile} --env-file ${envFile} exec -T app python seeding/seed.py"
-                    } else {
-                        bat "docker compose -f ${composeFile} --env-file ${envFile} exec -T app alembic upgrade head"
-                      //  bat "docker compose -f ${composeFile} --env-file ${envFile} exec -T app python seeding/seed.py"
-                    }
-                    
-                    echo "✅ Deployed successfully!"
+                    // ✅ --wait ensures Docker waits until healthcheck passes before proceeding
+                    // alembic upgrade head already runs inside the container's startup command
+                    echo "✅ Deployed successfully! Container is healthy and serving traffic."
                 }
             }
         }
